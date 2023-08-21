@@ -22,9 +22,8 @@ const userSchema = new Schema(
       required: true,
       unique: true,
     },
-    address: {
+    confirm_password: {
       type: String,
-      required: true,
     },
     otpSecret: { type: String }, // Store the OTP secret here
   },

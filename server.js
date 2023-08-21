@@ -10,8 +10,8 @@ import categoryRoute from "./routes/categoryRoute.js";
 //Create an instance of express
 const app = express();
 
-// //Enable CORS for all routes
-// app.use(cors());
+//Enable CORS for all routes
+app.use(cors());
 
 //configure dotenv
 config();
