@@ -19,13 +19,17 @@ router.post("/register", registerController);
 router.post("/login", loginController);
 
 // Route to request OTP for password reset
-router.post('/req-password-reset', passwordResetController)
+router.post("/req-password-reset", passwordResetController);
 
 // Route to verify OTP and reset password
-router.post('/verify-otp-change-password', verifyOtpController)
+router.post("/verify-otp-change-password", verifyOtpController);
+
+//Protected Route
+router.get("/user-auth", isLoggedIn, (req, res) => {
+  res.status(200).json({ ok: true });
+});
 
 //Private Route Testing
 router.get("/protected", isLoggedIn, protectedRouteController);
-
 
 export default router;
