@@ -13,7 +13,7 @@ const dbConnect = async () => {
     );
   } catch (error) {
     console.log(
-      `Something Went Wrong While Connection To DB`.bgRed.white,
+      `Something Went Wrong While Connecting To DB`.bgRed.white,
       error
     );
   }

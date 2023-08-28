@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "Wristworthy - Your one-stop destination for premium watches, laptops, and phones. Discover a vast selection of high-quality products from top brands. Shop with confidence and find the perfect accessory for your style and needs.",
+  "description": "WristWorthy - Your one-stop destination for premium watches, laptops, and phones. Discover a vast selection of high-quality products from top brands. Shop with confidence and find the perfect accessory for your style and needs.",
   "main": "index.js",
   "type": "module",
   "scripts": {
