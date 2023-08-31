@@ -25,6 +25,23 @@ const userSchema = new Schema(
     confirm_password: {
       type: String,
     },
+    addresses: [
+      {
+        firstName: String,
+        lastName: String,
+        emailAddress: String,
+        mobileNumber: String,
+        altMobileNumber: String,
+        country: String,
+        street: String,
+        city: String,
+        state: String,
+        pinCode: Number,
+        dist: String,
+        mandal: String,
+        village: String,
+      },
+    ],
     otpSecret: { type: String }, // Store the OTP secret here
   },
   { timestamps: true }
@@ -32,7 +49,7 @@ const userSchema = new Schema(
 
 // Generate and set the otpSecret before saving a new user //This is a mongoose middleware
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   if (!this.otpSecret) {
     this.otpSecret = speakeasy.generateSecret().base32;
   }
@@ -40,7 +57,7 @@ userSchema.pre("save", async function(next) {
   // Hash the otpSecret before saving it to the database
   try {
     const hashedOtpSecret = await hashPassword(this.otpSecret);
-    this.otpSecret = hashedOtpSecret
+    this.otpSecret = hashedOtpSecret;
     next();
   } catch (error) {
     console.error("Error in hashing the otpSecret".bgRed.white, error);
