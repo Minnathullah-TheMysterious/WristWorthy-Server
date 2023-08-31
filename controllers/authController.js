@@ -296,9 +296,14 @@ export const verifyOtpController = async (req, res) => {
 export const resetPasswordController = async (req, res) => {
   try {
     const { uId } = req.params;
-    console.log('User Id:', uId)
+    console.log("User Id:", uId);
     const { newPassword, confirmNewPassword } = req.body;
-    console.log('Password:', newPassword, '\n confirm password:', confirmNewPassword)
+    console.log(
+      "Password:",
+      newPassword,
+      "\n confirm password:",
+      confirmNewPassword
+    );
 
     //Validation
     switch (true) {
@@ -326,14 +331,14 @@ export const resetPasswordController = async (req, res) => {
           .status(400)
           .json({ success: false, message: "Passwords Does Not Match" });
       } else {
-        console.log('Entered Into Hashing and password reset section')
+        console.log("Entered Into Hashing and password reset section");
         const hashedPassword = await hashPassword(newPassword);
-        console.log('Password Hashed Successfully', hashedPassword)
+        console.log("Password Hashed Successfully", hashedPassword);
         const updatedUser = await userModel.findByIdAndUpdate(
           { _id: uId },
           { $set: { password: hashedPassword } }
         );
-        console.log('Updated User:',updatedUser)
+        console.log("Updated User:", updatedUser);
         res.status(202).json({
           success: true,
           message: "Password Reset Successful",
@@ -350,7 +355,7 @@ export const resetPasswordController = async (req, res) => {
   }
 };
 
-/*************************Add User Address || POST***************** */
+/*************************Add User Address By Id || POST***************** */
 export const addUserAddressController = async (req, res) => {
   try {
     const { uId } = req.params;
@@ -477,7 +482,7 @@ export const addUserAddressController = async (req, res) => {
   }
 };
 
-/******************Get User Addresses || GET*************** */
+/******************Get User Addresses By Id || GET*************** */
 export const getUserAddressesController = async (req, res) => {
   try {
     const { uId } = req.params;
@@ -497,7 +502,50 @@ export const getUserAddressesController = async (req, res) => {
   }
 };
 
-//**********************Protected Route Testing || GET********* */
+/******************Delete User Address By User Id and Address Id || DELETE********** */
+export const deleteUserAddressController = async (req, res) => {
+  try {
+    const { uId, aId } = req.params;
+
+    const user = await userModel.findById(uId);
+    if (!user) {
+      res.status(404).json({ success: false, message: "User Not Found" });
+    } else {
+      // const updatedAddressesPostDelete = user?.addresses?.filter(
+      //   (address) => address._id.toString() !== aId
+      // );
+      // user.addresses = updatedAddressesPostDelete;
+
+      const addressesCopy = [...user?.addresses];
+
+      const addressIndex = addressesCopy.findIndex(
+        (address) => address._id.toString() === aId
+      );
+      if (addressIndex === -1) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Address Not Found" });
+      } else {
+        addressesCopy.splice(addressIndex, 1);
+        user.addresses = addressesCopy;
+        const userDataPostDelete = await user.save();
+        return res.status(200).json({
+          success: true,
+          message: "Address Deleted Successfully",
+          userDataPostDelete,
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While Deleting The Address",
+      error,
+    });
+  }
+};
+
+//**********************Protected Route ***Testing*** || GET********* */
 export const protectedRouteController = (req, res) => {
   res.status(200).json({ success: true, message: "Protected Route" });
 };

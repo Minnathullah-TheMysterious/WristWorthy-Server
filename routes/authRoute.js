@@ -9,6 +9,7 @@ import {
   getUserAddressesController,
   getUserDataController,
   resetPasswordController,
+  deleteUserAddressController,
 } from "../controllers/authController.js";
 import { isLoggedIn } from "../middlewares/authMiddleware.js";
 
@@ -34,16 +35,19 @@ router.post("/verify-otp/:uId", verifyOtpController);
 // Route to reset password
 router.post("/reset-password/:uId", resetPasswordController);
 
+//Add User Address by Id
+router.post('/add-user-address/:uId', isLoggedIn, addUserAddressController)
+
+//delete User Address by userId and addressId
+router.delete('/delete-user-address/:uId/:aId', deleteUserAddressController)
+
+//Get User Address by Id
+router.get('/get-user-addresses/:uId', getUserAddressesController)
+
 //Protected Route
 router.get("/user-auth", isLoggedIn, (req, res) => {
   res.status(200).json({ ok: true });
 });
-
-//Update User Address by Id
-router.post('/add-user-address/:uId', isLoggedIn, addUserAddressController)
-
-//Get User Address by Id
-router.get('/get-user-addresses/:uId', getUserAddressesController)
 
 //Private Route Testing
 router.get("/protected", isLoggedIn, protectedRouteController);
