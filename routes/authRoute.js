@@ -36,7 +36,7 @@ router.post("/verify-otp/:uId", verifyOtpController);
 router.post("/reset-password/:uId", resetPasswordController);
 
 //Add User Address by Id
-router.post('/add-user-address/:uId', isLoggedIn, addUserAddressController)
+router.post('/add-user-address/:uId', addUserAddressController)
 
 //delete User Address by userId and addressId
 router.delete('/delete-user-address/:uId/:aId', deleteUserAddressController)

@@ -441,7 +441,7 @@ export const addUserAddressController = async (req, res) => {
         return;
     }
 
-    const user = await userModel.findById({ _id: uId });
+    const user = await userModel.findById(uId);
     if (!user) {
       return res
         .status(404)
