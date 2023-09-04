@@ -10,6 +10,7 @@ import {
   getUserDataController,
   resetPasswordController,
   deleteUserAddressController,
+  updateUserAddressController,
 } from "../controllers/authController.js";
 import { isLoggedIn } from "../middlewares/authMiddleware.js";
 
@@ -24,25 +25,28 @@ router.post("/register", registerController);
 router.post("/login", loginController);
 
 //Get User Data
-router.get('/user-info/:uId', getUserDataController)
+router.get('/user-info/:userId', getUserDataController)
 
 // Route to request OTP for password reset
 router.post("/req-password-reset", reqResetPasswordController);
 
 // Route to verify OTP
-router.post("/verify-otp/:uId", verifyOtpController);
+router.post("/verify-otp/:userId", verifyOtpController);
 
 // Route to reset password
-router.post("/reset-password/:uId", resetPasswordController);
+router.post("/reset-password/:userId", resetPasswordController);
 
 //Add User Address by Id
-router.post('/add-user-address/:uId', addUserAddressController)
-
-//delete User Address by userId and addressId
-router.delete('/delete-user-address/:uId/:aId', deleteUserAddressController)
+router.post('/add-user-address/:userId', addUserAddressController)
 
 //Get User Address by Id
-router.get('/get-user-addresses/:uId', getUserAddressesController)
+router.get('/get-user-addresses/:userId', getUserAddressesController)
+
+//Delete User Address by userId and addressId
+router.delete('/delete-user-address/:userId/:addressId', deleteUserAddressController)
+
+//Update User Address by userId and addressId
+router.put('/update-user-address/:userId/:addressId', updateUserAddressController)
 
 //Protected Route
 router.get("/user-auth", isLoggedIn, (req, res) => {
