@@ -2,7 +2,6 @@ import { Router } from "express";
 import {
   loginController,
   reqResetPasswordController,
-  protectedRouteController,
   registerController,
   addUserAddressController,
   verifyOtpController,
@@ -12,7 +11,7 @@ import {
   deleteUserAddressController,
   updateUserAddressController,
 } from "../controllers/authController.js";
-import { isLoggedIn } from "../middlewares/authMiddleware.js";
+import { isAdmin, isLoggedIn } from "../middlewares/authMiddleware.js";
 
 //Enable Express Router
 const router = Router();
@@ -25,7 +24,7 @@ router.post("/register", registerController);
 router.post("/login", loginController);
 
 //Get User Data
-router.get('/user-info/:userId', getUserDataController)
+router.get("/user-info/:userId", getUserDataController);
 
 // Route to request OTP for password reset
 router.post("/req-password-reset", reqResetPasswordController);
@@ -37,23 +36,42 @@ router.post("/verify-otp/:userId", verifyOtpController);
 router.post("/reset-password/:userId", resetPasswordController);
 
 //Add User Address by Id
-router.post('/add-user-address/:userId', addUserAddressController)
+router.post("/add-user-address/:userId", addUserAddressController);
 
 //Get User Address by Id
-router.get('/get-user-addresses/:userId', getUserAddressesController)
+router.get("/get-user-addresses/:userId", getUserAddressesController);
 
 //Delete User Address by userId and addressId
-router.delete('/delete-user-address/:userId/:addressId', deleteUserAddressController)
+router.delete(
+  "/delete-user-address/:userId/:addressId",
+  deleteUserAddressController
+);
 
 //Update User Address by userId and addressId
-router.put('/update-user-address/:userId/:addressId', updateUserAddressController)
+router.put(
+  "/update-user-address/:userId/:addressId",
+  updateUserAddressController
+);
 
-//Protected Route
+//User Protected Route
 router.get("/user-auth", isLoggedIn, (req, res) => {
   res.status(200).json({ ok: true });
 });
 
-//Private Route Testing
-router.get("/protected", isLoggedIn, protectedRouteController);
+//Admin Protected Route
+router.get("/admin-auth", isLoggedIn, isAdmin, (req, res) => {
+  res.status(200).json({ ok: true });
+});
+
+/***************************TESTING********************* */
+//Private route for admin *****Testing*********
+router.get("/admin-route", isLoggedIn, isAdmin, (req, res) => {
+  res.status(200).json({ success: true, message: "Admin Protected route" });
+});
+
+//Private Route for LoggedIn user ******* Testing *********
+router.get("/protected", isLoggedIn, (req, res) => {
+  res.status(200).json({ success: true, message: "Protected Route" });
+});
 
 export default router;

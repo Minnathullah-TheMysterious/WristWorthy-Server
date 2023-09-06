@@ -129,7 +129,7 @@ export const loginController = async (req, res) => {
       } else {
         // User is found and authenticated, generate a JWT
         const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
-          expiresIn: "3d",
+          expiresIn: "10h",
         });
         res.status(200).json({
           token,
@@ -141,6 +141,7 @@ export const loginController = async (req, res) => {
             email: user.email,
             phone: user.phone,
             addresses: user.addresses,
+            role: user.role,
           },
         });
       }
@@ -549,7 +550,7 @@ export const deleteUserAddressController = async (req, res) => {
 export const updateUserAddressController = async (req, res) => {
   try {
     const { userId, addressId } = req.params;
-    console.log(`user_id: ${userId} \n address_id: ${addressId}`)
+    console.log(`user_id: ${userId} \n address_id: ${addressId}`);
 
     const {
       firstName,
@@ -686,9 +687,4 @@ export const updateUserAddressController = async (req, res) => {
       error
     );
   }
-};
-
-//**********************Protected Route ***Testing*** || GET********* */
-export const protectedRouteController = (req, res) => {
-  res.status(200).json({ success: true, message: "Protected Route" });
 };

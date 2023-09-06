@@ -42,6 +42,7 @@ const userSchema = new Schema(
         village: String,
       },
     ],
+    role: { type: String, default: "user" },
     otpSecret: { type: String }, // Store the OTP secret here
   },
   { timestamps: true }
