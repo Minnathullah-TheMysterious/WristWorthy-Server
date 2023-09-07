@@ -8,10 +8,24 @@ export const isLoggedIn = (req, res, next) => {
       res.status(401).json({ succuss: false, message: "Not A Logged In User" });
       return console.log(`Token or Secret Key not found`.bgRed.white);
     } else {
-      // Verify and decode the token
-      const { _id } = JWT.verify(token, process.env.JWT_SECRET_KEY);
-      req.userId = _id;
-      next();
+      try {
+        // Verify and decode the token
+        const decodedToken = JWT.verify(token, process.env.JWT_SECRET_KEY);
+        req.userId = decodedToken._id;
+        next();
+      } catch (error) {
+        if (error.name === "TokenExpiredError") {
+          console.error("Token has expired".bgRed.white);
+          return res
+            .status(401)
+            .json({ success: false, message: "Token has expired" });
+        } else {
+          console.error("Error in verifying token".bgRed.white, error);
+          return res
+            .status(401)
+            .json({ success: false, message: "Error in verifying token" });
+        }
+      }
     }
   } catch (error) {
     res.status(500).json({

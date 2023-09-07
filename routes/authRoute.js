@@ -42,16 +42,10 @@ router.post("/add-user-address/:userId", addUserAddressController);
 router.get("/get-user-addresses/:userId", getUserAddressesController);
 
 //Delete User Address by userId and addressId
-router.delete(
-  "/delete-user-address/:userId/:addressId",
-  deleteUserAddressController
-);
+router.delete("/delete-user-address/:userId/:addressId",deleteUserAddressController);
 
 //Update User Address by userId and addressId
-router.put(
-  "/update-user-address/:userId/:addressId",
-  updateUserAddressController
-);
+router.put("/update-user-address/:userId/:addressId",updateUserAddressController);
 
 //User Protected Route
 router.get("/user-auth", isLoggedIn, (req, res) => {
