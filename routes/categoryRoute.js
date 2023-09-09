@@ -1,9 +1,29 @@
 import { Router } from "express";
-import { createCategoryController } from "../controllers/categoryController.js";
+import multer from "multer";
+import { createCategoryController, getAllCategoriesController } from "../controllers/categoryController.js";
 
-const router = Router()
+const router = Router();
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public/category/images");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 //Create Category
-router.post('/create-category', createCategoryController)
+router.post(
+  "/create-category",
+  upload.single("image"),
+  createCategoryController
+);
 
-export default router
+//Fetch All Categories
+router.get('/get-all-categories', getAllCategoriesController)
+
+export default router;

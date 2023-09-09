@@ -1,4 +1,6 @@
 import express, { json, urlencoded } from "express";
+import { fileURLToPath } from "url";
+import { dirname, join } from "path";
 import colors from "colors";
 import { config } from "dotenv";
 import cors from "cors";
@@ -6,23 +8,33 @@ import dbConnect from "./config/db.js";
 import userModel from "./models/userModel.js";
 import authRoute from "./routes/authRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
+import productRoute from "./routes/productRoute.js";
+import brandRoute from "./routes/brandRoute.js";
 
-//Create an instance of express
 const app = express();
-
-//Enable CORS for all routes
-app.use(cors());
 
 //configure dotenv
 config();
 const port = process.env.PORT || 6000;
 
-// Middleware to parse JSON payloads
+const __filename = fileURLToPath(import.meta.url);
+console.log(__filename)
+const __dirname = dirname(__filename);
+console.log(__dirname)
+
+const staticDir = join(__dirname, "public");
+
+// Middlewares
+app.use(cors());
 app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(express.static(staticDir));
 
 //Routes
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoute);
+app.use("/api/v1/product", productRoute);
+app.use("/api/v1/brand", brandRoute);
 
 //Example REST Api
 app.get("/:email", async (req, res) => {

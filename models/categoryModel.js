@@ -1,20 +1,26 @@
 import { Schema, model } from "mongoose";
 
-const categorySchema = new Schema({
-  category_name: {
-    type: String,
-    required: true,
-    unique: true,
+const categorySchema = new Schema(
+  {
+    category_name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    slug: {
+      type: String,
+      lowercase: true,
+      unique: true,
+    },
+    image: {
+      location: String,
+      contentType: String,
+      originalname: String,
+      size: Number,
+    },
   },
-  slug: {
-    type: String,
-    lowercase: true,
-  },
-  photo: {
-    data: Buffer,
-    contentType: String
-  },
-});
+  { timestamps: true }
+);
 
 const categoryModel = model("categories", categorySchema);
 export default categoryModel;
