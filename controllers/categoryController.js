@@ -4,7 +4,7 @@ import slugify from "slugify";
 /************Create Category || POST*********** */
 export const createCategoryController = async (req, res) => {
   const { category_name } = req.body;
-  const image = req.file
+  const image = req.file;
   //validation
   if (!category_name) {
     return res.status(400).json({
@@ -22,25 +22,23 @@ export const createCategoryController = async (req, res) => {
   //Check for the existing category
   const existingCategory = await categoryModel.findOne({ category_name });
   if (existingCategory) {
-    return res
-      .status(409)
-      .json({
-        success: false,
-        message: "Category already exists",
-        existingCategory,
-      });
+    return res.status(409).json({
+      success: false,
+      message: "Category already exists",
+      existingCategory,
+    });
   } else {
     const slug = slugify(category_name);
     try {
       const data = new categoryModel({
         category_name,
-        slug: slug,
+        slug,
         image: {
           location: image?.path,
           contentType: image?.mimetype,
           originalname: image?.originalname,
           size: image?.size,
-        }
+        },
       });
       const category = await data.save();
       console.log(category);
@@ -64,23 +62,22 @@ export const createCategoryController = async (req, res) => {
 };
 
 /*************Get All Categories || GET********** */
-export const getAllCategoriesController = async (req, res)=>{
+export const getAllCategoriesController = async (req, res) => {
   try {
     const categories = await categoryModel.find();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "All The Categories Fetched Successfully",
-        categories
-      });
+    res.status(200).json({
+      success: true,
+      message: "All The Categories Fetched Successfully",
+      categories,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Something Went Wrong while fetching all the categories".bgRed.white,
+      message: "Something Went Wrong while fetching all the categories".bgRed
+        .white,
       error: error.message,
     });
     console.error(error);
   }
-}
+};
