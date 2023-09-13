@@ -188,6 +188,28 @@ export const createProductController = async (req, res) => {
   }
 };
 
+/*****************Get All Products || GET****************** */
+export const getAllProductsController = async (req, res) => {
+  try {
+    const products = await productModel.find();
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "All Products fetched successfully",
+        totalCount: products?.length,
+        products,
+      });
+  } catch (error) {
+    console.error("Something Went Wrong While Fetching products", error);
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While Fetching products",
+      error: error.message,
+    });
+  }
+};
+
 /*************Test Route || GET********** */
 export const testProductRouteController = (req, res) => {
   res.send("success");

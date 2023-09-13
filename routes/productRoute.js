@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { createProductController, testProductRouteController } from "../controllers/productController.js";
+import { createProductController, getAllProductsController, testProductRouteController } from "../controllers/productController.js";
 
 const router = Router();
 
@@ -28,6 +28,9 @@ router.post(
   ]),
   createProductController
 );
+
+//Get All Products
+router.get('/get-all-products', getAllProductsController)
 
 //testing
 router.get('/test', testProductRouteController)
