@@ -10,6 +10,7 @@ import authRoute from "./routes/authRoute.js";
 import categoryRoute from "./routes/categoryRoute.js";
 import productRoute from "./routes/productRoute.js";
 import brandRoute from "./routes/brandRoute.js";
+import wishlistRoute from "./routes/wishlistRoute.js";
 
 const app = express();
 
@@ -35,6 +36,7 @@ app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/category", categoryRoute);
 app.use("/api/v1/product", productRoute);
 app.use("/api/v1/brand", brandRoute);
+app.use("/api/v1/wishlist", wishlistRoute);
 
 //Example REST Api
 app.get("/:email", async (req, res) => {

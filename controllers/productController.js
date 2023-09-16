@@ -301,10 +301,12 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     }
     ///////////////
     if (_sort && _order && _sort === "price") {
-      //_order should be 1 or -1
+      //_order should be 1(asc) or -1(desc)
+      console.log(_order)
       sortObject.price = _order;
     }
     if (_sort && _order && _sort === "rating") {
+      console.log(_order)
       sortObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
     }
 

@@ -22,5 +22,5 @@ const categorySchema = new Schema(
   { timestamps: true }
 );
 
-const categoryModel = model("categories", categorySchema);
+const categoryModel = model("category", categorySchema);
 export default categoryModel;

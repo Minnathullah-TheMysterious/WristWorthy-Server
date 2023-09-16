@@ -12,12 +12,12 @@ const productSchema = new Schema({
   },
   brand: {
     type: mongoose.Types.ObjectId,
-    ref:"brands",
+    ref:"brand",
     required: true,
   },
   category: {
     type: mongoose.Types.ObjectId,
-    ref:"categories",
+    ref:"category",
     required: true,
   },
   description: {
@@ -55,5 +55,5 @@ const productSchema = new Schema({
   ],
 }, {timestamps: true});
 
-const productModel = model("products", productSchema);
+const productModel = model("product", productSchema);
 export default productModel;
