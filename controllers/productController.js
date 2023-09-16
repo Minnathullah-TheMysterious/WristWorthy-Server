@@ -192,14 +192,139 @@ export const createProductController = async (req, res) => {
 export const getAllProductsController = async (req, res) => {
   try {
     const products = await productModel.find();
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "All Products fetched successfully",
-        totalCount: products?.length,
-        products,
-      });
+    res.status(200).json({
+      success: true,
+      message: "All Products fetched successfully",
+      totalCount: products?.length,
+      products,
+    });
+  } catch (error) {
+    console.error("Something Went Wrong While Fetching products", error);
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While Fetching products",
+      error: error.message,
+    });
+  }
+};
+
+/************************Get Filtered Products || GET************* */
+export const getFilteredAndSortedProductsController = async (req, res) => {
+  try {
+    const {
+      brand,
+      category,
+      lowerPriceLimit,
+      higherPriceLimit,
+      _order,
+      _sort,
+      _page,
+      _limit,
+    } = req.query;
+
+    let findObject = {};
+    let sortObject = {};
+    const pageNum = _page || 1;
+    const limit = _limit || 8;
+    const skip = (pageNum - 1) * limit;
+
+    //Check For Query Params
+    if (brand) {
+      findObject = { brand };
+      console.log(findObject);
+    }
+    if (category) {
+      findObject = { category };
+    }
+    if (
+      lowerPriceLimit &&
+      higherPriceLimit &&
+      !isNaN(lowerPriceLimit) &&
+      !isNaN(higherPriceLimit)
+    ) {
+      findObject = {
+        price: {
+          $gte: parseFloat(lowerPriceLimit),
+          $lte: parseFloat(higherPriceLimit),
+        },
+      };
+    }
+    if (brand && category) {
+      findObject = { brand, category };
+    }
+    if (
+      brand &&
+      lowerPriceLimit &&
+      higherPriceLimit &&
+      !isNaN(lowerPriceLimit) &&
+      !isNaN(higherPriceLimit)
+    ) {
+      findObject = {
+        brand,
+        price: {
+          $gte: parseFloat(lowerPriceLimit),
+          $lte: parseFloat(higherPriceLimit),
+        },
+      };
+    }
+    if (
+      category &&
+      lowerPriceLimit &&
+      higherPriceLimit &&
+      !isNaN(lowerPriceLimit) &&
+      !isNaN(higherPriceLimit)
+    ) {
+      findObject = {
+        category,
+        price: {
+          $gte: parseFloat(lowerPriceLimit),
+          $lte: parseFloat(higherPriceLimit),
+        },
+      };
+    }
+    if (
+      brand &&
+      category &&
+      lowerPriceLimit &&
+      higherPriceLimit &&
+      !isNaN(lowerPriceLimit) &&
+      !isNaN(higherPriceLimit)
+    ) {
+      findObject = {
+        brand,
+        category,
+        price: {
+          $gte: parseFloat(lowerPriceLimit),
+          $lte: parseFloat(higherPriceLimit),
+        },
+      };
+    }
+    ///////////////
+    if (_sort && _order && _sort === "price") {
+      //_order should be 1 or -1
+      sortObject.price = _order;
+    }
+    if (_sort && _order && _sort === "rating") {
+      sortObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
+    }
+
+    const filteredProductsCount = await productModel
+      .find(findObject)
+      .sort(sortObject);
+
+    const filteredProducts = await productModel
+      .find(findObject)
+      .sort(sortObject)
+      .populate("category")
+      .populate("brand")
+      .limit(limit)
+      .skip(skip);
+    res.status(200).json({
+      success: true,
+      message: "Filtered Products fetched successfully",
+      totalCount: filteredProductsCount?.length,
+      filteredProducts,
+    });
   } catch (error) {
     console.error("Something Went Wrong While Fetching products", error);
     res.status(500).json({

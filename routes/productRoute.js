@@ -1,6 +1,11 @@
 import { Router } from "express";
 import multer from "multer";
-import { createProductController, getAllProductsController, testProductRouteController } from "../controllers/productController.js";
+import {
+  createProductController,
+  getAllProductsController,
+  getFilteredAndSortedProductsController,
+  testProductRouteController,
+} from "../controllers/productController.js";
 
 const router = Router();
 
@@ -20,19 +25,22 @@ const upload = multer({ storage: storage });
 router.post(
   "/create-product",
   upload.fields([
-    { name: "thumbnail", maxCount:1 },
-    { name: "image_1", maxCount:1 },
-    { name: "image_2", maxCount:1 },
-    { name: "image_3", maxCount:1 },
-    { name: "image_4", maxCount:1 },
+    { name: "thumbnail", maxCount: 1 },
+    { name: "image_1", maxCount: 1 },
+    { name: "image_2", maxCount: 1 },
+    { name: "image_3", maxCount: 1 },
+    { name: "image_4", maxCount: 1 },
   ]),
   createProductController
 );
 
 //Get All Products
-router.get('/get-all-products', getAllProductsController)
+router.get("/get-all-products", getAllProductsController);
+
+//Get filtered Products
+router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 
 //testing
-router.get('/test', testProductRouteController)
+router.get("/test", testProductRouteController);
 
 export default router;

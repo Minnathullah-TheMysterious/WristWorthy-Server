@@ -22,7 +22,7 @@ console.log(__filename)
 const __dirname = dirname(__filename);
 console.log(__dirname)
 
-const staticDir = join(__dirname, "public");
+const staticDir = join(__dirname);
 
 // Middlewares
 app.use(cors());
