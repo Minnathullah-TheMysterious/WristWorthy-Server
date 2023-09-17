@@ -62,80 +62,57 @@ export const createProductController = async (req, res) => {
         message: "Invalid Category Type",
       });
     }
+    if (!image_1) {
+      return res.status(400).json({
+        success: false,
+        message: "image_1 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_2) {
+      return res.status(400).json({
+        success: false,
+        message: "image_2 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_3) {
+      return res.status(400).json({
+        success: false,
+        message: "image_3 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_4) {
+      return res.status(400).json({
+        success: false,
+        message: "image_4 is required. You can repeat the same image for each image",
+      });
+    }
 
-    //Check For Images
-    const images = image_1
-      ? {
-          location: image_1[0]?.path,
-          contentType: image_1[0]?.mimetype,
-          originalname: image_1[0]?.originalname,
-          size: image_1[0]?.size,
-        }
-      : image_1 && image_2
-      ? ({
-          location: image_1[0]?.path,
-          contentType: image_1[0]?.mimetype,
-          originalname: image_1[0]?.originalname,
-          size: image_1[0]?.size,
-        },
-        {
-          location: image_2[0]?.path,
-          contentType: image_2[0]?.mimetype,
-          originalname: image_2[0]?.originalname,
-          size: image_2[0]?.size,
-        })
-      : image_1 && image_2 && image_3
-      ? ({
-          location: image_1[0]?.path,
-          contentType: image_1[0]?.mimetype,
-          originalname: image_1[0]?.originalname,
-          size: image_1[0]?.size,
-        },
-        {
-          location: image_2[0]?.path,
-          contentType: image_2[0]?.mimetype,
-          originalname: image_2[0]?.originalname,
-          size: image_2[0]?.size,
-        },
-        {
-          location: image_3[0]?.path,
-          contentType: image_3[0]?.mimetype,
-          originalname: image_3[0]?.originalname,
-          size: image_3[0]?.size,
-        })
-      : image_1 && image_2 && image_3 && image_4
-      ? ({
-          location: image_1[0]?.path,
-          contentType: image_1[0]?.mimetype,
-          originalname: image_1[0]?.originalname,
-          size: image_1[0]?.size,
-        },
-        {
-          location: image_2[0]?.path,
-          contentType: image_2[0]?.mimetype,
-          originalname: image_2[0]?.originalname,
-          size: image_2[0]?.size,
-        },
-        {
-          location: image_3[0]?.path,
-          contentType: image_3[0]?.mimetype,
-          originalname: image_3[0]?.originalname,
-          size: image_3[0]?.size,
-        },
-        {
-          location: image_4[0]?.path,
-          contentType: image_4[0]?.mimetype,
-          originalname: image_4[0]?.originalname,
-          size: image_4[0]?.size,
-        })
-      : {
-          location: thumbnail[0]?.path,
-          contentType: thumbnail[0]?.mimetype,
-          originalname: thumbnail[0]?.originalname,
-          size: thumbnail[0]?.size,
-        };
-
-    //In frontend I need to put checks for all the image fields. user must provide image_1 first and go on upto image_4
+    const images = [
+      {
+        location: image_1[0]?.path,
+        contentType: image_1[0]?.mimetype,
+        originalname: image_1[0]?.originalname,
+        size: image_1[0]?.size,
+      },
+      {
+        location: image_2[0]?.path,
+        contentType: image_2[0]?.mimetype,
+        originalname: image_2[0]?.originalname,
+        size: image_2[0]?.size,
+      },
+      {
+        location: image_3[0]?.path,
+        contentType: image_3[0]?.mimetype,
+        originalname: image_3[0]?.originalname,
+        size: image_3[0]?.size,
+      },
+      {
+        location: image_4[0]?.path,
+        contentType: image_4[0]?.mimetype,
+        originalname: image_4[0]?.originalname,
+        size: image_4[0]?.size,
+      },
+    ];
 
     const existingProduct = await productModel.findOne({ product_name });
     if (existingProduct) {
@@ -168,7 +145,7 @@ export const createProductController = async (req, res) => {
           originalname: thumbnail[0]?.originalname,
           size: thumbnail[0]?.size,
         },
-        images: [images],
+        images,
       });
 
       const product = await data.save();
@@ -302,11 +279,11 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     ///////////////
     if (_sort && _order && _sort === "price") {
       //_order should be 1(asc) or -1(desc)
-      console.log(_order)
+      console.log(_order);
       sortObject.price = _order;
     }
     if (_sort && _order && _sort === "rating") {
-      console.log(_order)
+      console.log(_order);
       sortObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
     }
 
@@ -332,6 +309,35 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching products",
+      error: error.message,
+    });
+  }
+};
+
+/****************Get Selected Product || GET*********** */
+export const getSelectedProductController = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const selectedProduct = await productModel.findById(productId);
+    if (!selectedProduct) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product Not Found" });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "Selected Product Fetched Successfully",
+        selectedProduct,
+      });
+    }
+  } catch (error) {
+    console.error(
+      "Something Went Wrong While Fetching the selected product",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While Fetching the selected product",
       error: error.message,
     });
   }

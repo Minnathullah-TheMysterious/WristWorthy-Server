@@ -4,6 +4,7 @@ import {
   createProductController,
   getAllProductsController,
   getFilteredAndSortedProductsController,
+  getSelectedProductController,
   testProductRouteController,
 } from "../controllers/productController.js";
 
@@ -39,6 +40,9 @@ router.get("/get-all-products", getAllProductsController);
 
 //Get filtered Products
 router.get("/get-filtered-products", getFilteredAndSortedProductsController);
+
+//Get Selected Product
+router.get('/get-selected-product/:productId', getSelectedProductController)
 
 //testing
 router.get("/test", testProductRouteController);
