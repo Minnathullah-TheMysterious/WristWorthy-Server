@@ -12,6 +12,8 @@ import productRoute from "./routes/productRoute.js";
 import brandRoute from "./routes/brandRoute.js";
 import wishlistRoute from "./routes/wishlistRoute.js";
 import cartRoute from './routes/cartRoute.js'
+import orderRoute from './routes/orderRoute.js'
+
 const app = express();
 
 //configure dotenv
@@ -38,6 +40,7 @@ app.use("/api/v1/product", productRoute);
 app.use("/api/v1/brand", brandRoute);
 app.use("/api/v1/wishlist", wishlistRoute);
 app.use("/api/v1/cart", cartRoute);
+app.use("/api/v1/order", orderRoute);
 
 //Example REST Api
 app.get("/:email", async (req, res) => {

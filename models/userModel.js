@@ -36,7 +36,7 @@ const userSchema = new Schema(
         street: String,
         city: String,
         state: String,
-        pinCode: Number,
+        pinCode: String,
         dist: String,
         mandal: String,
         village: String,

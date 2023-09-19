@@ -30,7 +30,7 @@ export const addToCartController = async (req, res) => {
       const cart = await cartModel.findOne({ user: userId }).populate('items.product');
       return res.status(201).json({
         success: true,
-        message: "Cart Created And Item Added To It Successfully",
+        message: "Item Added To Cart",
         cart,
       });
     } else {
@@ -141,7 +141,7 @@ export const deleteCartItemController = async (req, res) => {
         const cart = await user.save();
         return res.status(200).json({
           success: true,
-          message: "Item Removed From Cart Successfully",
+          message: "Item Removed From Cart",
           cart,
         });
       }
@@ -173,7 +173,7 @@ export const deleteCartController = async (req, res) => {
     if (deletedCart.acknowledged && deletedCart.deletedCount >= 1) {
       return res.status(200).json({
         success: true,
-        message: "Cart Deleted Successfully",
+        message: "Cart Has Been Reset",
       });
     } else {
       return res
