@@ -1,25 +1,44 @@
-import {Router} from 'express'
+import { Router } from "express";
 import multer from "multer";
-import { createBrandController, getAllBrandsController } from '../controllers/brandController.js'
+import {
+  createBrandController,
+  deleteBranController,
+  getAllBrandsController,
+  restoreBrandsController,
+  updateBrandController,
+} from "../controllers/brandController.js";
 
-const router = Router()
+const router = Router();
 
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, "public/brand/images");
-    },
-    filename: function (req, file, cb) {
-      const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-      cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
-    },
-  });
-  
-  const upload = multer({ storage });
+  destination: function (req, file, cb) {
+    cb(null, "public/brand/images");
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
+  },
+});
+
+const upload = multer({ storage });
 
 //Create Brand
-router.post('/create-brand', upload.single('image'), createBrandController)
+router.post("/create-brand", upload.single("image"), createBrandController);
+
+//Update Brand
+router.put(
+  "/update-brand/:brandId",
+  upload.single("image"),
+  updateBrandController
+);
 
 //Get All Brands
-router.get('/get-all-brands', getAllBrandsController)
+router.get("/get-all-brands", getAllBrandsController);
 
-export default router
+//Delete Brand
+router.delete("/delete-brand/:brandId", deleteBranController);
+
+//Restore Brand
+router.put("/restore-brand/:brandId", restoreBrandsController);
+
+export default router;

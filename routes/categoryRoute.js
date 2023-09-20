@@ -1,6 +1,12 @@
 import { Router } from "express";
 import multer from "multer";
-import { createCategoryController, getAllCategoriesController } from "../controllers/categoryController.js";
+import {
+  createCategoryController,
+  deleteCategoryController,
+  getAllCategoriesController,
+  restoreCategoryController,
+  updateCategoryController,
+} from "../controllers/categoryController.js";
 
 const router = Router();
 
@@ -23,7 +29,20 @@ router.post(
   createCategoryController
 );
 
+//Update Category
+router.put(
+  "/update-category/:categoryId",
+  upload.single("image"),
+  updateCategoryController
+);
+
 //Fetch All Categories
-router.get('/get-all-categories', getAllCategoriesController)
+router.get("/get-all-categories", getAllCategoriesController);
+
+//Delete Category
+router.delete("/delete-category/:categoryId", deleteCategoryController);
+
+//Restore Category
+router.put("/restore-category/:categoryId", restoreCategoryController);
 
 export default router;

@@ -65,25 +65,29 @@ export const createProductController = async (req, res) => {
     if (!image_1) {
       return res.status(400).json({
         success: false,
-        message: "image_1 is required. You can repeat the same image for each image",
+        message:
+          "image_1 is required. You can repeat the same image for each image",
       });
     }
     if (!image_2) {
       return res.status(400).json({
         success: false,
-        message: "image_2 is required. You can repeat the same image for each image",
+        message:
+          "image_2 is required. You can repeat the same image for each image",
       });
     }
     if (!image_3) {
       return res.status(400).json({
         success: false,
-        message: "image_3 is required. You can repeat the same image for each image",
+        message:
+          "image_3 is required. You can repeat the same image for each image",
       });
     }
     if (!image_4) {
       return res.status(400).json({
         success: false,
-        message: "image_4 is required. You can repeat the same image for each image",
+        message:
+          "image_4 is required. You can repeat the same image for each image",
       });
     }
 
@@ -158,10 +162,194 @@ export const createProductController = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Something Went Wrong while Creating the product".bgRed.white,
+      message: "Something Went Wrong while Creating the product",
       error: error.message,
     });
-    console.error(error);
+    console.error(
+      "Something Went Wrong while Creating the product".bgRed.white,
+      error
+    );
+  }
+};
+
+/*******************Update Product || PUT******************* */
+export const updateProductController = async (req, res) => {
+  const { thumbnail, image_1, image_2, image_3, image_4 } = req.files;
+  const {
+    product_name,
+    description,
+    price,
+    discountPercentage,
+    stock,
+    rating,
+    brand,
+    category,
+  } = req.body;
+  const { productId } = req.params;
+
+  try {
+    //validation
+    if (!product_name) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product Name Is Required" });
+    }
+    if (!description) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product Description Is Required" });
+    }
+    if (!price) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product Price Is Required" });
+    }
+    if (!category) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product Category Is Required" });
+    }
+    if (!brand) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product Brand Is Required" });
+    }
+    if (!thumbnail) {
+      return res.status(400).json({
+        success: false,
+        message: "Product Image For Thumbnail Is Required",
+      });
+    }
+    if (!isValidObjectId(brand)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Brand Type",
+      });
+    }
+    if (!isValidObjectId(category)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Category Type",
+      });
+    }
+    if (!image_1) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "image_1 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_2) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "image_2 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_3) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "image_3 is required. You can repeat the same image for each image",
+      });
+    }
+    if (!image_4) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "image_4 is required. You can repeat the same image for each image",
+      });
+    }
+
+    const images = [
+      {
+        location: image_1[0]?.path,
+        contentType: image_1[0]?.mimetype,
+        originalname: image_1[0]?.originalname,
+        size: image_1[0]?.size,
+      },
+      {
+        location: image_2[0]?.path,
+        contentType: image_2[0]?.mimetype,
+        originalname: image_2[0]?.originalname,
+        size: image_2[0]?.size,
+      },
+      {
+        location: image_3[0]?.path,
+        contentType: image_3[0]?.mimetype,
+        originalname: image_3[0]?.originalname,
+        size: image_3[0]?.size,
+      },
+      {
+        location: image_4[0]?.path,
+        contentType: image_4[0]?.mimetype,
+        originalname: image_4[0]?.originalname,
+        size: image_4[0]?.size,
+      },
+    ];
+
+    const products = await productModel.find();
+    if (!products) {
+      return res.status(404).json({
+        success: false,
+        message: "Products Not Found",
+      });
+    } else {
+      const productIndex = products.findIndex(
+        (product) => product._id.toString() === productId
+      );
+      if (productIndex === -1) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product Not Found" });
+      } else {
+        const updatedProductData = {
+          product_name,
+          slug: slugify(product_name),
+          brand,
+          category,
+          description,
+          stock,
+          price,
+          discountPercentage,
+          rating,
+          thumbnail: {
+            location: thumbnail[0]?.path,
+            contentType: thumbnail[0]?.mimetype,
+            originalname: thumbnail[0]?.originalname,
+            size: thumbnail[0]?.size,
+          },
+          images,
+        };
+        const updatedProduct = await productModel.findByIdAndUpdate(
+          productId,
+          { $set: updatedProductData },
+          { new: true }
+        );
+
+        if (!updatedProduct) {
+          return res
+            .status(500)
+            .json({ success: false, message: "Failed to update the product" });
+        } else {
+          return res.status(200).json({
+            success: true,
+            message: "Product updated successfully",
+            product: updatedProduct,
+          });
+        }
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong while updating the product",
+      error: error.message,
+    });
+    console.error(
+      "Something Went Wrong while updating the product".bgRed.white,
+      error
+    );
   }
 };
 
@@ -338,6 +526,60 @@ export const getSelectedProductController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching the selected product",
+      error: error.message,
+    });
+  }
+};
+
+/******************Delete Product || DELETE****************** */
+export const deleteProductController = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    let product = await productModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    } else {
+      product.deleted = true
+      await product.save()
+      return res
+        .status(200)
+        .json({ success: true, message: "Product Deleted Successfully"});
+    }
+  } catch (error) {
+    console.error("Something Went Wrong While deleting the product", error);
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While deleting the product",
+      error: error.message,
+    });
+  }
+};
+
+/******************Restore Product || PUT****************** */
+export const restoreProductController = async (req, res) => {
+  try {
+    const { productId } = req.params;
+
+    let product = await productModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    } else {
+      product.deleted = false
+      await product.save()
+      return res
+        .status(200)
+        .json({ success: true, message: "Product Restored Successfully"});
+    }
+  } catch (error) {
+    console.error("Something Went Wrong While restoring the product", error);
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While restoring the product",
       error: error.message,
     });
   }

@@ -15,7 +15,7 @@ export const isLoggedIn = (req, res, next) => {
         next();
       } catch (error) {
         if (error.name === "TokenExpiredError") {
-          console.error("Token has expired".bgRed.white);
+          console.error("Token has expired".bgRed.white, error.message);
           return res
             .status(401)
             .json({ success: false, message: "Token has expired" });

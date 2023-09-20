@@ -18,6 +18,7 @@ const brandSchema = new Schema(
       originalname: String,
       size: Number,
     },
+    deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

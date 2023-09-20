@@ -2,10 +2,13 @@ import { Router } from "express";
 import multer from "multer";
 import {
   createProductController,
+  deleteProductController,
   getAllProductsController,
   getFilteredAndSortedProductsController,
   getSelectedProductController,
+  restoreProductController,
   testProductRouteController,
+  updateProductController,
 } from "../controllers/productController.js";
 
 const router = Router();
@@ -35,6 +38,19 @@ router.post(
   createProductController
 );
 
+//Update Product
+router.put(
+  "/update-product/:productId",
+  upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "image_1", maxCount: 1 },
+    { name: "image_2", maxCount: 1 },
+    { name: "image_3", maxCount: 1 },
+    { name: "image_4", maxCount: 1 },
+  ]),
+  updateProductController
+);
+
 //Get All Products
 router.get("/get-all-products", getAllProductsController);
 
@@ -42,7 +58,13 @@ router.get("/get-all-products", getAllProductsController);
 router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 
 //Get Selected Product
-router.get('/get-selected-product/:productId', getSelectedProductController)
+router.get("/get-selected-product/:productId", getSelectedProductController);
+
+//Delete Product
+router.delete('/delete-product/:productId', deleteProductController)
+
+//Restore Product
+router.put('/restore-product/:productId', restoreProductController)
 
 //testing
 router.get("/test", testProductRouteController);
