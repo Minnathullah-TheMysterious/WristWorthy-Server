@@ -9,6 +9,8 @@ import {
   restoreProductController,
   testProductRouteController,
   updateProductController,
+  updateProductImageController,
+  updateProductThumbnailController,
 } from "../controllers/productController.js";
 
 const router = Router();
@@ -39,17 +41,13 @@ router.post(
 );
 
 //Update Product
-router.put(
-  "/update-product/:productId",
-  upload.fields([
-    { name: "thumbnail", maxCount: 1 },
-    { name: "image_1", maxCount: 1 },
-    { name: "image_2", maxCount: 1 },
-    { name: "image_3", maxCount: 1 },
-    { name: "image_4", maxCount: 1 },
-  ]),
-  updateProductController
-);
+router.put("/update-product/:productId", updateProductController);
+
+//Update Product Thumbnail
+router.put('/update-product-thumbnail/:productId', upload.single('thumbnail'), updateProductThumbnailController)
+
+//Update product image
+router.put('/update-product-image/:productId/:imageIndex', upload.single('image'), updateProductImageController)
 
 //Get All Products
 router.get("/get-all-products", getAllProductsController);
@@ -61,10 +59,10 @@ router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 router.get("/get-selected-product/:productId", getSelectedProductController);
 
 //Delete Product
-router.delete('/delete-product/:productId', deleteProductController)
+router.delete("/delete-product/:productId", deleteProductController);
 
 //Restore Product
-router.put('/restore-product/:productId', restoreProductController)
+router.put("/restore-product/:productId", restoreProductController);
 
 //testing
 router.get("/test", testProductRouteController);

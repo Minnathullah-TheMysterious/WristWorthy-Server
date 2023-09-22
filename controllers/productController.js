@@ -1,6 +1,7 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import mongoose, { isValidObjectId } from "mongoose";
+import { promises as fsPromises, constants as fsConstants } from "fs";
 
 /****************Create Product || POST**************** */
 export const createProductController = async (req, res) => {
@@ -174,7 +175,6 @@ export const createProductController = async (req, res) => {
 
 /*******************Update Product || PUT******************* */
 export const updateProductController = async (req, res) => {
-  const { thumbnail, image_1, image_2, image_3, image_4 } = req.files;
   const {
     product_name,
     description,
@@ -214,12 +214,6 @@ export const updateProductController = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Product Brand Is Required" });
     }
-    if (!thumbnail) {
-      return res.status(400).json({
-        success: false,
-        message: "Product Image For Thumbnail Is Required",
-      });
-    }
     if (!isValidObjectId(brand)) {
       return res.status(400).json({
         success: false,
@@ -232,114 +226,30 @@ export const updateProductController = async (req, res) => {
         message: "Invalid Category Type",
       });
     }
-    if (!image_1) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "image_1 is required. You can repeat the same image for each image",
-      });
-    }
-    if (!image_2) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "image_2 is required. You can repeat the same image for each image",
-      });
-    }
-    if (!image_3) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "image_3 is required. You can repeat the same image for each image",
-      });
-    }
-    if (!image_4) {
-      return res.status(400).json({
-        success: false,
-        message:
-          "image_4 is required. You can repeat the same image for each image",
-      });
-    }
 
-    const images = [
-      {
-        location: image_1[0]?.path,
-        contentType: image_1[0]?.mimetype,
-        originalname: image_1[0]?.originalname,
-        size: image_1[0]?.size,
-      },
-      {
-        location: image_2[0]?.path,
-        contentType: image_2[0]?.mimetype,
-        originalname: image_2[0]?.originalname,
-        size: image_2[0]?.size,
-      },
-      {
-        location: image_3[0]?.path,
-        contentType: image_3[0]?.mimetype,
-        originalname: image_3[0]?.originalname,
-        size: image_3[0]?.size,
-      },
-      {
-        location: image_4[0]?.path,
-        contentType: image_4[0]?.mimetype,
-        originalname: image_4[0]?.originalname,
-        size: image_4[0]?.size,
-      },
-    ];
+    const updatedProductData = {
+      product_name,
+      slug: slugify(product_name),
+      brand,
+      category,
+      description,
+      stock,
+      price,
+      discountPercentage,
+      rating
+    };
 
-    const products = await productModel.find();
-    if (!products) {
-      return res.status(404).json({
-        success: false,
-        message: "Products Not Found",
-      });
-    } else {
-      const productIndex = products.findIndex(
-        (product) => product._id.toString() === productId
-      );
-      if (productIndex === -1) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Product Not Found" });
-      } else {
-        const updatedProductData = {
-          product_name,
-          slug: slugify(product_name),
-          brand,
-          category,
-          description,
-          stock,
-          price,
-          discountPercentage,
-          rating,
-          thumbnail: {
-            location: thumbnail[0]?.path,
-            contentType: thumbnail[0]?.mimetype,
-            originalname: thumbnail[0]?.originalname,
-            size: thumbnail[0]?.size,
-          },
-          images,
-        };
-        const updatedProduct = await productModel.findByIdAndUpdate(
-          productId,
-          { $set: updatedProductData },
-          { new: true }
-        );
+    const updatedProduct = await productModel.findByIdAndUpdate(
+      productId,
+      updatedProductData,
+      { new: true }
+    );
 
-        if (!updatedProduct) {
-          return res
-            .status(500)
-            .json({ success: false, message: "Failed to update the product" });
-        } else {
-          return res.status(200).json({
-            success: true,
-            message: "Product updated successfully",
-            product: updatedProduct,
-          });
-        }
-      }
-    }
+    return res.status(200).json({
+      success: true,
+      message: "Product Updates Successfully",
+      product: updatedProduct,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -348,6 +258,122 @@ export const updateProductController = async (req, res) => {
     });
     console.error(
       "Something Went Wrong while updating the product".bgRed.white,
+      error
+    );
+  }
+};
+
+/******************Update Product Thumbnail || PUT************* */
+export const updateProductThumbnailController = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const thumbnail = req.file;
+
+    //validation
+    if (!thumbnail) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product thumbnail is required" });
+    }
+
+    const product = await productModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "product not found" });
+    } else {
+      if (product.thumbnail && product.thumbnail.location) {
+        try {
+          await fsPromises.access(
+            product.thumbnail.location,
+            fsConstants.F_OK | fsConstants.R
+          );
+          await fsPromises.unlink(product.thumbnail.location);
+        } catch (fsError) {
+          console.error('File Not Found \n'.bgRed.white, fsError.message )
+        }
+      }
+
+      product.thumbnail = {
+        location: thumbnail?.path,
+        contentType: thumbnail?.mimetype,
+        originalname: thumbnail?.originalname,
+        size: thumbnail?.size,
+      };
+      const updatedProduct = await product.save();
+      return res.status(200).json({
+        success: true,
+        message: "Thumbnail Updated Successfully",
+        product: updatedProduct,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong while updating the product thumbnail",
+      error: error.message,
+    });
+    console.error(
+      "Something Went Wrong while updating the product thumbnail".bgRed.white,
+      error
+    );
+  }
+};
+
+/******************Update Product image_1 || PUT***************** */
+export const updateProductImageController = async (req, res) => {
+  try {
+    const { productId, imageIndex } = req.params;
+    const image = req.file;
+    console.log(image)
+
+    //validation
+    if (!image) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Product image is required" });
+    }
+
+    const product = await productModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "product not found" });
+    } else {
+      if (
+        product.images &&
+        product.images[imageIndex] &&
+        product.images[imageIndex].location
+      ) {
+        try {
+          await fsPromises.access(product.images[imageIndex].location, fsConstants.F_OK | fsConstants.R_OK)
+          await fsPromises.unlink(product.images[imageIndex].location);
+        } catch (error) {
+          console.error('File Not Found \n'.bgRed.white, error.message )
+        }
+      }
+
+      product.images[imageIndex] = {
+        location: image?.path,
+        contentType: image?.mimetype,
+        originalname: image?.originalname,
+        size: image?.size,
+      };
+      const updatedProduct = await product.save();
+      return res.status(200).json({
+        success: true,
+        message: "Image updated Successfully",
+        product: updatedProduct,
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong while updating the image",
+      error: error.message,
+    });
+    console.error(
+      "Something Went Wrong while updating the image".bgRed.white,
       error
     );
   }
@@ -542,11 +568,11 @@ export const deleteProductController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
     } else {
-      product.deleted = true
-      await product.save()
+      product.deleted = true;
+      await product.save();
       return res
         .status(200)
-        .json({ success: true, message: "Product Deleted Successfully"});
+        .json({ success: true, message: "Product Deleted Successfully" });
     }
   } catch (error) {
     console.error("Something Went Wrong While deleting the product", error);
@@ -569,11 +595,11 @@ export const restoreProductController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
     } else {
-      product.deleted = false
-      await product.save()
+      product.deleted = false;
+      await product.save();
       return res
         .status(200)
-        .json({ success: true, message: "Product Restored Successfully"});
+        .json({ success: true, message: "Product Restored Successfully" });
     }
   } catch (error) {
     console.error("Something Went Wrong While restoring the product", error);
