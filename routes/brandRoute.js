@@ -6,6 +6,7 @@ import {
   getAllBrandsController,
   restoreBrandsController,
   updateBrandController,
+  updateBrandImageController,
 } from "../controllers/brandController.js";
 
 const router = Router();
@@ -25,12 +26,11 @@ const upload = multer({ storage });
 //Create Brand
 router.post("/create-brand", upload.single("image"), createBrandController);
 
+//Update Brand Image
+router.put("/update-brand-image/:brandId", upload.single("image"), updateBrandImageController);
+
 //Update Brand
-router.put(
-  "/update-brand/:brandId",
-  upload.single("image"),
-  updateBrandController
-);
+router.put("/update-brand/:brandId", updateBrandController);
 
 //Get All Brands
 router.get("/get-all-brands", getAllBrandsController);

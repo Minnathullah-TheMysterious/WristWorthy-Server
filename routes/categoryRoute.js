@@ -29,7 +29,7 @@ router.post(
   createCategoryController
 );
 
-//Update Category
+//Update Category Image
 router.put(
   "/update-category-image/:categoryId",
   upload.single("image"),

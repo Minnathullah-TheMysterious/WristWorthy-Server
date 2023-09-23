@@ -62,7 +62,7 @@ export const createCategoryController = async (req, res) => {
   }
 };
 
-/************Update Category || PUT*********** */
+/************Update Category Image || PUT*********** */
 export const updateCategoryImageController = async (req, res) => {
   try {
     const image = req.file;
