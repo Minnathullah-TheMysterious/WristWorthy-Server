@@ -6,6 +6,7 @@ import {
   getAllCategoriesController,
   restoreCategoryController,
   updateCategoryController,
+  updateCategoryImageController,
 } from "../controllers/categoryController.js";
 
 const router = Router();
@@ -19,7 +20,6 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage });
 
 //Create Category
@@ -31,10 +31,13 @@ router.post(
 
 //Update Category
 router.put(
-  "/update-category/:categoryId",
+  "/update-category-image/:categoryId",
   upload.single("image"),
-  updateCategoryController
+  updateCategoryImageController
 );
+
+//Update Category
+router.put("/update-category/:categoryId", updateCategoryController);
 
 //Fetch All Categories
 router.get("/get-all-categories", getAllCategoriesController);
