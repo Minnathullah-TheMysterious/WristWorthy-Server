@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
-  getAllOrdersController,
+  getAllFilteredOrdersController,
+  getOrderByIdController,
   getUserOrdersController,
   placeOrderController,
   updateOrderStatusController,
@@ -14,8 +15,11 @@ router.post("/place-order/:userId", placeOrderController);
 //Fetch User Orders
 router.get("/get-user-orders/:userId", getUserOrdersController);
 
-//Fetch all Orders
-router.get("/get-all-orders", getAllOrdersController);
+//Fetch all/Filtered Orders
+router.get("/get-all-filtered-orders", getAllFilteredOrdersController);
+
+//Fetch Order By Id
+router.get("/get-order-details/:orderId", getOrderByIdController);
 
 //Update Order Status
 router.put("/update-order-status/:userId/:orderId/:orderStatus", updateOrderStatusController);

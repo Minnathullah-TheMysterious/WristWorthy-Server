@@ -24,7 +24,6 @@ const storage = multer.diskStorage({
     cb(null, file.fieldname + "-" + uniqueSuffix + "-" + file.originalname);
   },
 });
-
 const upload = multer({ storage: storage });
 
 //Create Product
