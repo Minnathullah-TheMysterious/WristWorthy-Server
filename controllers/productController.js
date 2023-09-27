@@ -236,7 +236,7 @@ export const updateProductController = async (req, res) => {
       stock,
       price,
       discountPercentage,
-      rating
+      rating,
     };
 
     const updatedProduct = await productModel.findByIdAndUpdate(
@@ -290,7 +290,7 @@ export const updateProductThumbnailController = async (req, res) => {
           );
           await fsPromises.unlink(product.thumbnail.location);
         } catch (fsError) {
-          console.error('File Not Found \n'.bgRed.white, fsError.message )
+          console.error("File Not Found \n".bgRed.white, fsError.message);
         }
       }
 
@@ -325,7 +325,7 @@ export const updateProductImageController = async (req, res) => {
   try {
     const { productId, imageIndex } = req.params;
     const image = req.file;
-    console.log(image)
+    console.log(image);
 
     //validation
     if (!image) {
@@ -346,10 +346,13 @@ export const updateProductImageController = async (req, res) => {
         product.images[imageIndex].location
       ) {
         try {
-          await fsPromises.access(product.images[imageIndex].location, fsConstants.F_OK | fsConstants.R_OK)
+          await fsPromises.access(
+            product.images[imageIndex].location,
+            fsConstants.F_OK | fsConstants.R_OK
+          );
           await fsPromises.unlink(product.images[imageIndex].location);
         } catch (error) {
-          console.error('File Not Found \n'.bgRed.white, error.message )
+          console.error("File Not Found \n".bgRed.white, error.message);
         }
       }
 
@@ -413,19 +416,19 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       _limit,
     } = req.query;
 
-    let findObject = {};
-    let sortObject = {};
+    let findQueryObject = {};
+    let sortQueryObject = {};
     const pageNum = _page || 1;
     const limit = _limit || 8;
     const skip = (pageNum - 1) * limit;
 
     //Check For Query Params
     if (brand) {
-      findObject = { brand };
-      console.log(findObject);
+      findQueryObject = { brand };
+      console.log(findQueryObject);
     }
     if (category) {
-      findObject = { category };
+      findQueryObject = { category };
     }
     if (
       lowerPriceLimit &&
@@ -433,7 +436,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       !isNaN(lowerPriceLimit) &&
       !isNaN(higherPriceLimit)
     ) {
-      findObject = {
+      findQueryObject = {
         price: {
           $gte: parseFloat(lowerPriceLimit),
           $lte: parseFloat(higherPriceLimit),
@@ -441,7 +444,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       };
     }
     if (brand && category) {
-      findObject = { brand, category };
+      findQueryObject = { brand, category };
     }
     if (
       brand &&
@@ -450,7 +453,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       !isNaN(lowerPriceLimit) &&
       !isNaN(higherPriceLimit)
     ) {
-      findObject = {
+      findQueryObject = {
         brand,
         price: {
           $gte: parseFloat(lowerPriceLimit),
@@ -465,7 +468,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       !isNaN(lowerPriceLimit) &&
       !isNaN(higherPriceLimit)
     ) {
-      findObject = {
+      findQueryObject = {
         category,
         price: {
           $gte: parseFloat(lowerPriceLimit),
@@ -481,7 +484,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       !isNaN(lowerPriceLimit) &&
       !isNaN(higherPriceLimit)
     ) {
-      findObject = {
+      findQueryObject = {
         brand,
         category,
         price: {
@@ -494,29 +497,46 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     if (_sort && _order && _sort === "price") {
       //_order should be 1(asc) or -1(desc)
       console.log(_order);
-      sortObject.price = _order;
+      sortQueryObject.price = _order;
     }
     if (_sort && _order && _sort === "rating") {
       console.log(_order);
-      sortObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
+      sortQueryObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
     }
 
-    const filteredProductsCount = await productModel
-      .find(findObject)
-      .sort(sortObject);
+    const nonDeletedFindQueryObject = { ...findQueryObject, deleted: false };
 
-    const filteredProducts = await productModel
-      .find(findObject)
-      .sort(sortObject)
+    const filteredNonDeletedProductsCount = await productModel
+      .find(nonDeletedFindQueryObject)
+      .sort(sortQueryObject)
+
+    const filteredProductsCount = await productModel
+      .find(findQueryObject)
+      .sort(sortQueryObject)
+
+    const filteredNonDeletedProducts = await productModel
+      .find(nonDeletedFindQueryObject)
+      .sort(sortQueryObject)
       .populate("category")
       .populate("brand")
       .limit(limit)
       .skip(skip);
+
+    const filteredProducts = await productModel
+      .find(findQueryObject)
+      .sort(sortQueryObject)
+      .populate("category")
+      .populate("brand")
+      .limit(limit)
+      .skip(skip);
+
     res.status(200).json({
       success: true,
       message: "Filtered Products fetched successfully",
-      totalCount: filteredProductsCount?.length,
+      totalNonDeletedProductsCount: filteredNonDeletedProductsCount?.length,
+      totalProductsCount: filteredProductsCount?.length,
       filteredProducts,
+      filteredNonDeletedProducts
     });
   } catch (error) {
     console.error("Something Went Wrong While Fetching products", error);
