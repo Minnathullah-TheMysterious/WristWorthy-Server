@@ -10,6 +10,7 @@ import {
   testProductRouteController,
   updateProductController,
   updateProductImageController,
+  updateProductStockController,
   updateProductThumbnailController,
 } from "../controllers/productController.js";
 
@@ -62,6 +63,9 @@ router.delete("/delete-product/:productId", deleteProductController);
 
 //Restore Product
 router.put("/restore-product/:productId", restoreProductController);
+
+//Update Product Stock
+router.put("/update-product-stock/:productId/:productQuantity", updateProductStockController);
 
 //testing
 router.get("/test", testProductRouteController);

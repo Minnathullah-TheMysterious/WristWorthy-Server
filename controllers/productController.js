@@ -631,6 +631,34 @@ export const restoreProductController = async (req, res) => {
   }
 };
 
+/******************Update Product Stock|| PUT****************** */
+export const updateProductStockController = async (req, res) => {
+  try {
+    const { productId, productQuantity } = req.params;
+
+    let product = await productModel.findById(productId);
+    if (!product) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Product not found" });
+    } else {
+      const stock = product.stock
+      product.stock = stock - +productQuantity
+      await product.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Product Stock Updated Successfully", product });
+    }
+  } catch (error) {
+    console.error("Something Went Wrong While updating the product stock", error);
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While updating the product stock",
+      error: error.message,
+    });
+  }
+};
+
 /*************Test Route || GET********** */
 export const testProductRouteController = (req, res) => {
   res.send("success");
