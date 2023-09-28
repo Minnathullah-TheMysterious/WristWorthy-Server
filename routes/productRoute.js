@@ -55,7 +55,7 @@ router.get("/get-all-products", getAllProductsController);
 //Get filtered Products
 router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 
-//Get Selected Product
+//Get Product By Id
 router.get("/get-selected-product/:productId", getSelectedProductController);
 
 //Delete Product

@@ -548,7 +548,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
   }
 };
 
-/****************Get Selected Product || GET*********** */
+/****************Get Product By Id || GET*********** */
 export const getSelectedProductController = async (req, res) => {
   try {
     const { productId } = req.params;

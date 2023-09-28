@@ -290,6 +290,9 @@ export const getAllFilteredOrdersController = async (req, res) => {
       {
         $limit: +limit,
       },
+      {
+        $sort: {updatedAt: -1},
+      },
     ];
 
     const orders = await orderModel.aggregate(ordersPipeline);
