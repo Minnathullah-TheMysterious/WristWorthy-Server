@@ -4,7 +4,7 @@ import orderModel from "../models/orderModel.js";
 /*****************placing an order || POST************** */
 export const placeOrderController = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
     const {
       products,
       totalItems,
@@ -41,12 +41,12 @@ export const placeOrderController = async (req, res) => {
     }
 
     const user = await orderModel
-      .findOne({ user: userId })
+      .findOne({ user: _id })
       .populate("orders.products.product_id");
     //Check For User
     if (!user) {
       const newUserOrder = new orderModel({
-        user: userId,
+        user: _id,
         orders: [
           {
             products,
@@ -87,10 +87,10 @@ export const placeOrderController = async (req, res) => {
 /*****************Fetch User Orders || GET************** */
 export const getUserOrdersController = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
 
     const orders = await orderModel
-      .findOne({ user: userId })
+      .findOne({ user: _id })
       .populate("orders.products.product_id");
     //Check For User
     if (!orders) {
@@ -291,7 +291,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
         $limit: +limit,
       },
       {
-        $sort: {updatedAt: -1},
+        $sort: { updatedAt: -1 },
       },
     ];
 
@@ -384,7 +384,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
         },
       },
     ];
-    
+
     const totalOrders = await orderModel.aggregate(ordersCountPipeline);
     const ordersCount = totalOrders?.length;
 
@@ -417,12 +417,13 @@ export const getAllFilteredOrdersController = async (req, res) => {
   }
 };
 
-/******************Update Order Status || PUT*********** */
-export const updateOrderStatusController = async (req, res) => {
+/******************Cancel Order || PUT*********** */
+export const cancelOrderController = async (req, res) => {
   try {
-    const { userId, orderId, orderStatus } = req.params;
+    const { orderId } = req.params;
+    const { _id } = req.user;
 
-    const user = await orderModel.findOne({ user: userId });
+    const user = await orderModel.findOne({ user: _id });
     if (!user) {
       return res
         .status(404)
@@ -437,28 +438,25 @@ export const updateOrderStatusController = async (req, res) => {
           .json({ success: false, message: "Order Not Found" });
       } else {
         //Directly mutating the data since in this case it is most simple way to do it
-        user.orders[orderIndex].status = orderStatus;
+        user.orders[orderIndex].status = "cancelled";
         await user.save();
 
         const orders = await orderModel
-          .findOne({ user: userId })
+          .findOne({ user: _id })
           .populate("orders.products.product_id");
 
         return res.status(200).json({
           success: true,
-          message: "Order Status Updated Successfully",
+          message: "Order Cancelled Successfully",
           orders,
         });
       }
     }
   } catch (error) {
-    console.error(
-      "Something went wrong while updating the order status",
-      error
-    );
+    console.error("Something went wrong while cancelling the order", error);
     res.status(500).json({
       success: false,
-      message: "Something went wrong while updating the order status",
+      message: "Something went wrong while cancelling the order",
       error: error.message,
     });
   }
@@ -573,6 +571,151 @@ export const getOrderByIdController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something went wrong while fetching the order",
+      error: error.message,
+    });
+  }
+};
+
+/***********************Update Order Status || PUT***************** */
+export const updateOrderStatusController = async (req, res) => {
+  try {
+    const { orderId, status } = req.params;
+
+    // Validate that orderId is a valid ObjectId
+    if (!Types.ObjectId.isValid(orderId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID" });
+    }
+
+    const orderObjectId = new Types.ObjectId(orderId);
+
+    /*****Another way of doing using findOneAndUpdate***** */
+    // const updatedOrder = await orderModel.findOneAndUpdate(
+    //   { "orders._id": orderId },
+    //   { $set: { "orders.$.status": status } },
+    //   { new: true }
+    // )
+
+    const updateStatusPipeline = [
+      { $unwind: "$orders" },
+      { $match: { "orders._id": orderObjectId } },
+      {
+        $set: { "orders.status": status },
+      },
+      { $out: "orders" },
+    ];
+
+    const updateStatus = await orderModel.aggregate(updateStatusPipeline);
+
+    const UpdatedOrderPipeline = [
+      { $unwind: "$orders" },
+      { $match: { "orders._id": orderObjectId } },
+      { $addFields: { "orders.product_id": "$orders.products.product_id" } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "orders.product_id",
+          foreignField: "_id",
+          as: "orders.populatedProducts",
+        },
+      },
+      {
+        $addFields: {
+          "orders.populatedProducts": {
+            $map: {
+              input: "$orders.populatedProducts",
+              as: "populatedProduct",
+              in: {
+                $mergeObjects: [
+                  "$$populatedProduct",
+                  {
+                    productsOverview: {
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: "$orders.products",
+                            as: "product",
+                            cond: {
+                              $eq: [
+                                "$$product.product_id",
+                                "$$populatedProduct._id",
+                              ],
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          user: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          order: {
+            $map: {
+              input: ["$orders"],
+              as: "order",
+              in: {
+                _id: "$$order._id",
+                totalItems: "$$order.totalItems",
+                totalAmount: "$$order.totalAmount",
+                paymentMethod: "$$order.paymentMethod",
+                status: "$$order.status",
+                products: {
+                  $map: {
+                    input: "$$order.populatedProducts",
+                    as: "populatedProduct",
+                    in: {
+                      product_id: "$$populatedProduct._id",
+                      product_name: "$$populatedProduct.product_name",
+                      price: "$$populatedProduct.price",
+                      discountPercentage:
+                        "$$populatedProduct.discountPercentage",
+                      quantity: "$$populatedProduct.productsOverview.quantity",
+                      thumbnail: "$$populatedProduct.thumbnail",
+                      deleted: "$$populatedProduct.deleted",
+                    },
+                  },
+                },
+                shippingAddress: "$$order.shippingAddress",
+              },
+            },
+          },
+        },
+      },
+    ];
+
+    const updatedOrder = await orderModel.aggregate(UpdatedOrderPipeline);
+
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order Not Found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order Status Updated Successfully",
+      updatedOrder,
+      /******when using findOneAndUpdate() to only get the updated Order****** */
+      // updatedOrder: updatedOrder.orders.find((order) =>
+      //   order._id.equals(orderId)
+      // ),
+    });
+  } catch (error) {
+    console.error("Something went wrong while updating order status", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating order status",
       error: error.message,
     });
   }

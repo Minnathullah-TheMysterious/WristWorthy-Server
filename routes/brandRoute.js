@@ -8,6 +8,8 @@ import {
   updateBrandController,
   updateBrandImageController,
 } from "../controllers/brandController.js";
+import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -24,21 +26,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 //Create Brand
-router.post("/create-brand", upload.single("image"), createBrandController);
+router.post("/admin/create-brand", isAuthenticated(), isAdmin, upload.single("image"), createBrandController);
 
 //Update Brand Image
-router.put("/update-brand-image/:brandId", upload.single("image"), updateBrandImageController);
+router.put("/admin/update-brand-image/:brandId", isAuthenticated(),isAdmin, upload.single("image"), updateBrandImageController);
 
 //Update Brand
-router.put("/update-brand/:brandId", updateBrandController);
+router.put("/admin/update-brand/:brandId", isAuthenticated(), isAdmin, updateBrandController);
 
 //Get All Brands
 router.get("/get-all-brands", getAllBrandsController);
 
 //Delete Brand
-router.delete("/delete-brand/:brandId", deleteBranController);
+router.delete("/admin/delete-brand/:brandId", isAuthenticated(), isAdmin, deleteBranController);
 
 //Restore Brand
-router.put("/restore-brand/:brandId", restoreBrandsController);
+router.put("/admin/restore-brand/:brandId", isAuthenticated(), isAdmin, restoreBrandsController);
 
 export default router;

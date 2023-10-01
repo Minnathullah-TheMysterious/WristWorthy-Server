@@ -8,6 +8,8 @@ import {
   updateCategoryController,
   updateCategoryImageController,
 } from "../controllers/categoryController.js";
+import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
@@ -24,28 +26,47 @@ const upload = multer({ storage });
 
 //Create Category
 router.post(
-  "/create-category",
+  "/admin/create-category",
+  isAuthenticated(),
+  isAdmin,
   upload.single("image"),
   createCategoryController
 );
 
 //Update Category Image
 router.put(
-  "/update-category-image/:categoryId",
+  "/admin/update-category-image/:categoryId",
+  isAuthenticated(),
+  isAdmin,
   upload.single("image"),
   updateCategoryImageController
 );
 
 //Update Category
-router.put("/update-category/:categoryId", updateCategoryController);
+router.put(
+  "/admin/update-category/:categoryId",
+  isAuthenticated(),
+  isAdmin,
+  updateCategoryController
+);
 
 //Fetch All Categories
 router.get("/get-all-categories", getAllCategoriesController);
 
 //Delete Category
-router.delete("/delete-category/:categoryId", deleteCategoryController);
+router.delete(
+  "/admin/delete-category/:categoryId",
+  isAuthenticated(),
+  isAdmin,
+  deleteCategoryController
+);
 
 //Restore Category
-router.put("/restore-category/:categoryId", restoreCategoryController);
+router.put(
+  "/admin/restore-category/:categoryId",
+  isAuthenticated(),
+  isAdmin,
+  restoreCategoryController
+);
 
 export default router;

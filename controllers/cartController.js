@@ -4,10 +4,11 @@ import cartModel from "../models/cartModel.js";
 /*******************Add To Cart || POST***************** */
 export const addToCartController = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const { productId } = req.params;
+    const {_id} = req.user
 
     //validation for valid objectId
-    const validUserId = isValidObjectId(userId);
+    const validUserId = isValidObjectId(_id);
     const validProductId = isValidObjectId(productId);
     if (!validUserId) {
       return res
@@ -20,14 +21,16 @@ export const addToCartController = async (req, res) => {
         .json({ success: false, message: "Not a valid product Id" });
     }
 
-    const user = await cartModel.findOne({ user: userId });
+    const user = await cartModel.findOne({ user: _id });
     if (!user) {
       const newCart = new cartModel({
-        user: userId,
+        user: _id,
         items: [{ product: productId }],
       });
       await newCart.save();
-      const cart = await cartModel.findOne({ user: userId }).populate('items.product');
+      const cart = await cartModel
+        .findOne({ user: _id })
+        .populate("items.product");
       return res.status(201).json({
         success: true,
         message: "Item Added To Cart",
@@ -46,7 +49,9 @@ export const addToCartController = async (req, res) => {
       } else {
         user.items = user.items.concat({ product: productId });
         await user.save();
-        const cart = await cartModel.findOne({ user: userId }).populate('items.product');
+        const cart = await cartModel
+          .findOne({ user: _id })
+          .populate("items.product");
         return res
           .status(200)
           .json({ success: true, message: "Item Added To Cart", cart });
@@ -65,10 +70,10 @@ export const addToCartController = async (req, res) => {
 /****************Get Cart Items || GET**************** */
 export const getCartItemsController = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
 
     //validation for valid objectId
-    const validUserId = isValidObjectId(userId);
+    const validUserId = isValidObjectId(_id);
     if (!validUserId) {
       return res
         .status(400)
@@ -76,7 +81,7 @@ export const getCartItemsController = async (req, res) => {
     }
 
     const cart = await cartModel
-      .findOne({ user: userId })
+      .findOne({ user: _id })
       .populate("items.product");
     if (!cart) {
       return res
@@ -102,10 +107,12 @@ export const getCartItemsController = async (req, res) => {
 /*******************Delete Cart Item || DELETE********** */
 export const deleteCartItemController = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const {  productId } = req.params;
+    const {  _id } = req.user;
+    console.log('req.user:', req.user)
 
     //validation for valid objectId
-    const validUserId = isValidObjectId(userId);
+    const validUserId = isValidObjectId(_id);
     const validProductId = isValidObjectId(productId);
     if (!validUserId) {
       return res
@@ -119,7 +126,7 @@ export const deleteCartItemController = async (req, res) => {
     }
 
     const user = await cartModel
-      .findOne({ user: userId })
+      .findOne({ user: _id })
       .populate("items.product");
     if (!user) {
       return res
@@ -127,7 +134,7 @@ export const deleteCartItemController = async (req, res) => {
         .json({ success: false, message: "User Not Found" });
     } else {
       const isProductPresentInCart = user.items.some(
-        (item) => item.product._id.toString() === productId
+        (item) => item?.product?._id?.toString() === productId
       );
       console.log(isProductPresentInCart);
       if (!isProductPresentInCart) {
@@ -136,7 +143,7 @@ export const deleteCartItemController = async (req, res) => {
           .json({ success: false, message: "Product Not Found In The Cart" });
       } else {
         user.items = user.items.filter(
-          (item) => item.product._id.toString() !== productId
+          (item) => item?.product?._id?.toString() !== productId
         );
         const cart = await user.save();
         return res.status(200).json({
@@ -151,7 +158,7 @@ export const deleteCartItemController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Deleting Cart Item",
-      error: error.message,
+      error: error.message
     });
   }
 };
@@ -159,17 +166,17 @@ export const deleteCartItemController = async (req, res) => {
 /*******************Delete Cart || DELETE********** */
 export const deleteCartController = async (req, res) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user;
 
     //validation for valid objectId
-    const validUserId = isValidObjectId(userId);
+    const validUserId = isValidObjectId(_id);
     if (!validUserId) {
       return res
         .status(400)
         .json({ success: false, message: "Not a valid user Id" });
     }
 
-    const deletedCart = await cartModel.deleteOne({ user: userId });
+    const deletedCart = await cartModel.deleteOne({ user: _id });
     if (deletedCart.acknowledged && deletedCart.deletedCount >= 1) {
       return res.status(200).json({
         success: true,
@@ -193,10 +200,11 @@ export const deleteCartController = async (req, res) => {
 /*****************Update Product Quantity || PUT********** */
 export const updateProductQuantityController = async (req, res) => {
   try {
-    const { userId, productId, productQuantity } = req.params;
+    const {productId, productQuantity } = req.params;
+    const { _id } = req.user;
 
     //validation for valid objectId
-    const validUserId = isValidObjectId(userId);
+    const validUserId = isValidObjectId(_id);
     const validProductId = isValidObjectId(productId);
     if (!validUserId) {
       return res
@@ -209,7 +217,7 @@ export const updateProductQuantityController = async (req, res) => {
         .json({ success: false, message: "Not a valid product Id" });
     }
 
-    const cart = await cartModel.findOne({ user: userId });
+    const cart = await cartModel.findOne({ user: _id });
     if (!cart) {
       return res.status(404).json({ success: true, message: "Cart Not Found" });
     } else {
@@ -232,7 +240,7 @@ export const updateProductQuantityController = async (req, res) => {
         await cart.save();
 
         const updatedCart = await cartModel
-          .findOne({ user: userId })
+          .findOne({ user: _id })
           .populate("items.product");
         return res.status(200).json({
           success: true,

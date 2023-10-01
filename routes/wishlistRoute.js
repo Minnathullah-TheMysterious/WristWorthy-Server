@@ -4,16 +4,17 @@ import {
   deleteWishlistItemController,
   getWishlistController,
 } from "../controllers/wishlistController.js";
+import { isAuthenticated } from "../helpers/authHelper.js";
 
 const router = Router();
 
 //Create Or Add To Wishlist || POST
-router.post("/add-to-wishlist/:userId/:productId", addToWishlistController);
+router.post("/user/add-to-wishlist/:productId", isAuthenticated(), addToWishlistController);
 
 //Fetch Wishlist Items || GET
-router.get("/get-wishlist/:userId", getWishlistController);
+router.get("/user/get-wishlist", isAuthenticated(), getWishlistController);
 
 //Delete WishList Items || DELETE
-router.delete('/delete-wishlist-item/:userId/:productId', deleteWishlistItemController)
+router.delete('/user/delete-wishlist-item/:productId', isAuthenticated(), deleteWishlistItemController)
 
 export default router;

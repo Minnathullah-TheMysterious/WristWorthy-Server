@@ -1,17 +1,17 @@
-import { isValidObjectId } from "mongoose";
 import wishlistModel from "../models/wishlistModel.js";
 
 /*****************Add To Wishlist || POST********* */
 export const addToWishlistController = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const { productId } = req.params;
+    const { _id } = req.user;
 
     //check if user wishlist is created or not. create one if not created
-    let hasWishlist = await wishlistModel.findOne({ user: userId });
+    let hasWishlist = await wishlistModel.findOne({ user: _id });
     console.log(hasWishlist);
     if (!hasWishlist) {
       const newWishlist = new wishlistModel({
-        user: userId,
+        user: _id,
         products: [productId],
       });
       const wishlist = await newWishlist.save();
@@ -54,13 +54,10 @@ export const addToWishlistController = async (req, res) => {
 /*****************Get Wishlist || GET********* */
 export const getWishlistController = async (req, res) => {
   try {
-    const { userId } = req.params;
-    console.log('user id from controller',userId)
-    const validId = isValidObjectId(userId)
-    console.log('Valid Object Id:', validId)
+    const { _id } = req.user;
 
     const wishlist = await wishlistModel
-      .findOne({ user: userId })
+      .findOne({ user: _id })
       .populate("products");
     if (!wishlist) {
       return res
@@ -86,9 +83,10 @@ export const getWishlistController = async (req, res) => {
 /*****************Delete Wishlist Item || DELETE********* */
 export const deleteWishlistItemController = async (req, res) => {
   try {
-    const { userId, productId } = req.params;
+    const { productId } = req.params;
+    const { _id } = req.user;
 
-    const wishlist = await wishlistModel.findOne({ user: userId }).populate('products');
+    const wishlist = await wishlistModel.findOne({ user: _id }).populate('products');
     if (!wishlist) {
       return res
         .status(404)

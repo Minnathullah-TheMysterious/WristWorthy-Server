@@ -10,18 +10,18 @@ import {
 const router = Router();
 
 //create cart or add to cart
-router.post("/add-to-cart/:userId/:productId", addToCartController);
+router.post("/user/add-to-cart/:productId", addToCartController);
 
-//Fetch All Cart Items
-router.get("/get-cart-items/:userId", getCartItemsController);
+//Fetch user Cart Items
+router.get("/user/get-cart-items", getCartItemsController);
 
 //Delete A Cart Item
-router.delete('/delete-cart-item/:userId/:productId', deleteCartItemController)
+router.delete('/user/delete-cart-item/:productId', deleteCartItemController)
 
 //Delete Cart
-router.delete('/delete-cart/:userId', deleteCartController)
+router.delete('/user/delete-cart', deleteCartController)
 
 //Update Product Quantity
-router.put('/update-product-quantity/:userId/:productId/:productQuantity', updateProductQuantityController)
+router.put('/user/update-product-quantity/:productId/:productQuantity', updateProductQuantityController)
 
 export default router;

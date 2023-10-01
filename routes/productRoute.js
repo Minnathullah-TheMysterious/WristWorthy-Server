@@ -3,7 +3,6 @@ import multer from "multer";
 import {
   createProductController,
   deleteProductController,
-  getAllProductsController,
   getFilteredAndSortedProductsController,
   getSelectedProductController,
   restoreProductController,
@@ -13,6 +12,8 @@ import {
   updateProductStockController,
   updateProductThumbnailController,
 } from "../controllers/productController.js";
+import { isAuthenticated } from "../helpers/authHelper.js";
+import {isAdmin} from '../middlewares/authMiddleware.js'
 
 const router = Router();
 
@@ -29,7 +30,9 @@ const upload = multer({ storage: storage });
 
 //Create Product
 router.post(
-  "/create-product",
+  "/admin/create-product",
+  isAuthenticated(),
+  isAdmin,
   upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "image_1", maxCount: 1 },
@@ -41,31 +44,59 @@ router.post(
 );
 
 //Update Product
-router.put("/update-product/:productId", updateProductController);
+router.put(
+  "/admin/update-product/:productId",
+  isAuthenticated(),
+  isAdmin,
+  updateProductController
+);
 
 //Update Product Thumbnail
-router.put('/update-product-thumbnail/:productId', upload.single('thumbnail'), updateProductThumbnailController)
+router.put(
+  "/admin/update-product-thumbnail/:productId",
+  isAuthenticated(),
+  isAdmin,
+  upload.single("thumbnail"),
+  updateProductThumbnailController
+);
 
 //Update product image
-router.put('/update-product-image/:productId/:imageIndex', upload.single('image'), updateProductImageController)
+router.put(
+  "/admin/update-product-image/:productId/:imageIndex",
+  isAuthenticated(),
+  isAdmin,
+  upload.single("image"),
+  updateProductImageController
+);
 
-//Get All Products
-router.get("/get-all-products", getAllProductsController);
-
-//Get filtered Products
+//Get all or filtered Products
 router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 
 //Get Product By Id
 router.get("/get-selected-product/:productId", getSelectedProductController);
 
 //Delete Product
-router.delete("/delete-product/:productId", deleteProductController);
+router.delete(
+  "/admin/delete-product/:productId",
+  isAuthenticated(),
+  isAdmin,
+  deleteProductController
+);
 
 //Restore Product
-router.put("/restore-product/:productId", restoreProductController);
+router.put(
+  "/admin/restore-product/:productId",
+  isAuthenticated(),
+  isAdmin,
+  restoreProductController
+);
 
 //Update Product Stock
-router.put("/update-product-stock/:productId/:productQuantity", updateProductStockController);
+router.put(
+  "/user/update-product-stock/:productId/:productQuantity",
+  isAuthenticated(),
+  updateProductStockController
+);
 
 //testing
 router.get("/test", testProductRouteController);

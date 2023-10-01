@@ -382,26 +382,6 @@ export const updateProductImageController = async (req, res) => {
   }
 };
 
-/*****************Get All Products || GET****************** */
-export const getAllProductsController = async (req, res) => {
-  try {
-    const products = await productModel.find();
-    res.status(200).json({
-      success: true,
-      message: "All Products fetched successfully",
-      totalCount: products?.length,
-      products,
-    });
-  } catch (error) {
-    console.error("Something Went Wrong While Fetching products", error);
-    res.status(500).json({
-      success: false,
-      message: "Something Went Wrong While Fetching products",
-      error: error.message,
-    });
-  }
-};
-
 /************************Get Filtered Products || GET************* */
 export const getFilteredAndSortedProductsController = async (req, res) => {
   try {
@@ -508,11 +488,11 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
 
     const filteredNonDeletedProductsCount = await productModel
       .find(nonDeletedFindQueryObject)
-      .sort(sortQueryObject)
+      .sort(sortQueryObject);
 
     const filteredProductsCount = await productModel
       .find(findQueryObject)
-      .sort(sortQueryObject)
+      .sort(sortQueryObject);
 
     const filteredNonDeletedProducts = await productModel
       .find(nonDeletedFindQueryObject)
@@ -536,7 +516,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       totalNonDeletedProductsCount: filteredNonDeletedProductsCount?.length,
       totalProductsCount: filteredProductsCount?.length,
       filteredProducts,
-      filteredNonDeletedProducts
+      filteredNonDeletedProducts,
     });
   } catch (error) {
     console.error("Something Went Wrong While Fetching products", error);
@@ -635,6 +615,7 @@ export const restoreProductController = async (req, res) => {
 export const updateProductStockController = async (req, res) => {
   try {
     const { productId, productQuantity } = req.params;
+    console.log(productId, productQuantity);
 
     let product = await productModel.findById(productId);
     if (!product) {
@@ -642,15 +623,22 @@ export const updateProductStockController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Product not found" });
     } else {
-      const stock = product.stock
-      product.stock = stock - +productQuantity
+      const stock = product.stock;
+      product.stock = stock - +productQuantity;
       await product.save();
       return res
         .status(200)
-        .json({ success: true, message: "Product Stock Updated Successfully", product });
+        .json({
+          success: true,
+          message: "Product Stock Updated Successfully",
+          product,
+        });
     }
   } catch (error) {
-    console.error("Something Went Wrong While updating the product stock", error);
+    console.error(
+      "Something Went Wrong While updating the product stock",
+      error
+    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While updating the product stock",

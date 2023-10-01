@@ -1,6 +1,6 @@
 import JWT from "jsonwebtoken";
-import userModel from "../models/userModel.js";
 
+//////////////Not In Use, instead using isAuthenticated() function from jwt strategy//////////////
 export const isLoggedIn = (req, res, next) => {
   const token = req.headers.authorization;
   try {
@@ -38,17 +38,32 @@ export const isLoggedIn = (req, res, next) => {
 
 export const isAdmin = async (req, res, next) => {
   try {
-    const user = await userModel.findById(req.userId);
-    if (user.role !== "admin") {
-      return console.error("Unauthorized Access, Not An Admin".bgRed.white);
+    const { role } = req.user;
+    if (role !== "admin") {
+      console.error("Unauthorized Access, Ony Admin Can Access".bgRed.white);
+      return res
+        .status(401)
+        .json({
+          success: false,
+          message: "Unauthorized Access, Only Admin Can Access",
+        });
     } else {
+      res.status(200)
       next();
     }
   } catch (error) {
     res.status(500).json({
       succuss: false,
       message: "Something Went Wrong in isAdmin Middleware".bgRed.white,
-      error,
+      error: error.message,
     });
   }
+};
+
+//Middleware for checking authentication via local strategy
+export const isAuth = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect("/");
 };

@@ -1,8 +1,9 @@
-import { comparePassword, hashPassword } from "../helpers/authHelper.js";
+import { hashPassword } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 import twilio from "twilio";
 import speakeasy from "speakeasy";
+import { sanitizeUser } from "./../helpers/authHelper.js";
 
 // ***************Register || POST**************/
 export const registerController = async (req, res) => {
@@ -80,10 +81,31 @@ export const registerController = async (req, res) => {
         phone,
       });
       const user = await data.save();
-      console.log(user);
-      res
-        .status(201)
-        .json({ success: true, message: "User Registered Successfully", user });
+
+      req.login(sanitizeUser(user), function (err) {
+        //Calls the serializer and adds to it
+        if (err) {
+          return res.status(400).json({
+            success: false,
+            message: err.message || err,
+          });
+        }
+        const token = JWT.sign(sanitizeUser(user), process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+
+        return res
+          .cookie("jwt", token, {
+            expires: new Date(Date.now() + 3600000),
+            httpOnly: true,
+          })
+          .status(201)
+          .json({
+            success: true,
+            message: "User Registered Successfully",
+            token,
+          });
+      });
     }
   } catch (error) {
     res.status(500).json({
@@ -97,78 +119,21 @@ export const registerController = async (req, res) => {
 
 //*************Login || POST***************** */
 export const loginController = async (req, res) => {
-  try {
-    const { email, phone, password } = req.body;
-    //validation
-    if (!email && !phone) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Email or Phone is Required" });
-    }
-    if (!password) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Password is Required" });
-    }
-
-    //Check for the user by email weather exists or not
-    const user = await userModel.findOne({
-      $or: [{ email }, { phone }],
-    });
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "Invalid User Or Password",
-      });
-    } else {
-      const match = await comparePassword(password, user.password);
-      if (!match) {
-        return res
-          .status(401)
-          .json({ message: "Invalid User Or Password", success: false });
-      } else {
-        // User is found and authenticated, generate a JWT
-        const token = JWT.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
-          expiresIn: "7d",
-        });
-        res.status(200).json({
-          token,
-          message: "LoggedIn Successfully",
-          success: true,
-          user: {
-            _id: user._id,
-            user_name: user.user_name,
-            email: user.email,
-            phone: user.phone,
-            addresses: user.addresses,
-            role: user.role,
-          },
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error in Login".bgRed.white, error);
-    res.status(500).json({ success: false, message: "Error in Login" });
-  }
-};
-
-/****************Get User Data || GET************** */
-export const getUserDataController = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const user = await userModel.findById(userId);
-    res.status(200).json({
+  const token = JWT.sign(sanitizeUser(req.user), process.env.JWT_SECRET_KEY, {
+    expiresIn: "7d",
+  });
+  res
+    .cookie("jwt", token, {
+      expires: new Date(Date.now() + 3600000),
+      httpOnly: true,
+    })
+    .status(200)
+    .json({
       success: true,
-      message: "User Data Fetched Successfully",
-      user,
+      message: "User Logged In successfully",
+      token,
+      user:sanitizeUser(req.user)
     });
-  } catch (error) {
-    console.error("Something Went Wrong in getting the user data", error);
-    res.status(500).json({
-      success: false,
-      message: "Something Went Wrong in getting the user data",
-    });
-  }
 };
 
 /***************Request Reset Password*********** */
@@ -356,335 +321,9 @@ export const resetPasswordController = async (req, res) => {
   }
 };
 
-/*************************Add User Address By Id || POST***************** */
-export const addUserAddressController = async (req, res) => {
-  try {
-    const { userId } = req.params;
-
-    const {
-      firstName,
-      lastName,
-      emailAddress,
-      mobileNumber,
-      altMobileNumber,
-      country,
-      street,
-      city,
-      village,
-      mandal,
-      pinCode,
-      state,
-      dist,
-    } = req.body;
-
-    //validation
-    switch (true) {
-      case !firstName:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your First Name" });
-        return;
-
-      case !lastName:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Last Name" });
-        return;
-
-      case !emailAddress:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Email" });
-        return;
-
-      case !mobileNumber:
-        res.status(400).json({
-          success: false,
-          message: "Please Provide Your Mobile Number",
-        });
-        return;
-
-      case !country:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Country" });
-        return;
-
-      case !street:
-        res.status(400).json({
-          success: false,
-          message: "Please Provide Your Street Address",
-        });
-        return;
-
-      case !state:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your State" });
-        return;
-
-      case !pinCode:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Pin Code" });
-        return;
-
-      case !dist:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your District" });
-        return;
-
-      case !mandal:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Town/Mandal" });
-        return;
-    }
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User Not Found" });
-    } else {
-      const newAddress = {
-        firstName,
-        lastName,
-        emailAddress,
-        mobileNumber,
-        altMobileNumber,
-        country,
-        state,
-        city,
-        dist,
-        mandal,
-        village,
-        pinCode,
-        street,
-      };
-
-      const updateUserAddress = [...user.addresses, newAddress];
-      user.addresses = updateUserAddress;
-      await user.save();
-      res.status(200).json({
-        success: true,
-        message: "User Address Added Successfully",
-        user,
-      });
-    }
-  } catch (error) {
-    console.error("Something went wrong in updateUserAddressController");
-    res.status(500).json({
-      success: true,
-      message: "Something went wrong in updateUserAddressController",
-      error,
-    });
-  }
-};
-
-/******************Get User Addresses By Id || GET*************** */
-export const getUserAddressesController = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const response = await userModel.findById(userId);
-    return res.status(200).json({
-      success: true,
-      message: "User Addresses Fetched Successfully",
-      addresses: response?.addresses,
-    });
-  } catch (error) {
-    console.error("Something Went Wrong While Fetching the data");
-    res.status(500).json({
-      success: false,
-      message: "Something Went Wrong While Fetching the data",
-      error,
-    });
-  }
-};
-
-/******************Delete User Address By User Id and Address Id || DELETE********** */
-export const deleteUserAddressController = async (req, res) => {
-  try {
-    const { userId, addressId } = req.params;
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      res.status(404).json({ success: false, message: "User Not Found" });
-    } else {
-      // const updatedAddressesPostDelete = user?.addresses?.filter(
-      //   (address) => address._id.toString() !== addressId
-      // );
-      // user.addresses = updatedAddressesPostDelete;
-
-      const addressesCopy = [...user?.addresses];
-
-      const addressIndex = addressesCopy.findIndex(
-        (address) => address._id.toString() === addressId
-      );
-      if (addressIndex === -1) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Address Not Found" });
-      } else {
-        addressesCopy.splice(addressIndex, 1);
-        user.addresses = addressesCopy;
-        const userPostDelete = await user.save();
-        return res.status(200).json({
-          success: true,
-          message: "Address Deleted Successfully",
-          userPostDelete,
-        });
-      }
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Something Went Wrong While Deleting The Address",
-      error,
-    });
-  }
-};
-
-/******************Update User Address By User Id and Address Id || PUT************** */
-export const updateUserAddressController = async (req, res) => {
-  try {
-    const { userId, addressId } = req.params;
-    console.log(`user_id: ${userId} \n address_id: ${addressId}`);
-
-    const {
-      firstName,
-      lastName,
-      emailAddress,
-      mobileNumber,
-      altMobileNumber,
-      country,
-      street,
-      city,
-      village,
-      mandal,
-      pinCode,
-      state,
-      dist,
-    } = req.body;
-
-    //validation
-    switch (true) {
-      case !firstName:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your First Name" });
-        return;
-
-      case !lastName:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Last Name" });
-        return;
-
-      case !emailAddress:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Email" });
-        return;
-
-      case !mobileNumber:
-        res.status(400).json({
-          success: false,
-          message: "Please Provide Your Mobile Number",
-        });
-        return;
-
-      case !country:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Country" });
-        return;
-
-      case !street:
-        res.status(400).json({
-          success: false,
-          message: "Please Provide Your Street Address",
-        });
-        return;
-
-      case !state:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your State" });
-        return;
-
-      case !pinCode:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Pin Code" });
-        return;
-
-      case !dist:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your District" });
-        return;
-
-      case !mandal:
-        res
-          .status(400)
-          .json({ success: false, message: "Please Provide Your Town/Mandal" });
-        return;
-    }
-
-    const user = await userModel.findById(userId);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ success: false, message: "User Not Found" });
-    } else {
-      const updatedAddress = {
-        firstName,
-        lastName,
-        emailAddress,
-        mobileNumber,
-        altMobileNumber,
-        country,
-        state,
-        city,
-        dist,
-        mandal,
-        village,
-        pinCode,
-        street,
-        _id: addressId,
-      };
-
-      const addressesCopy = [...user.addresses];
-
-      const updateAddressIndex = addressesCopy.findIndex(
-        (address) => address._id.toString() === addressId
-      );
-
-      if (updateAddressIndex === -1) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Address To Be Updated Not Found" });
-      } else {
-        addressesCopy.splice(updateAddressIndex, 1, updatedAddress);
-        user.addresses = addressesCopy;
-        const updatedUser = await user.save();
-        return res.status(200).json({
-          success: true,
-          message: "Address Updated Successfully",
-          updatedUser,
-        });
-      }
-    }
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: "Something Went Wrong while updating the User Address",
-    });
-    console.error(
-      "Something Went Wrong in the updateUserAddressController",
-      error
-    );
-  }
+/*****************Logout || POST************* */
+export const logoutController = (req, res) => {
+  req.logout(() => {
+    return res.json({ success: true, message: "user logged out successfully" });
+  });
 };
