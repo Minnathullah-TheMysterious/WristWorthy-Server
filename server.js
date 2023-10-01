@@ -9,6 +9,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 import session from "express-session";
 import cookieParser from "cookie-parser";
+import Stripe from "stripe";
 import dbConnect from "./config/db.js";
 import userModel from "./models/userModel.js";
 import authRoute from "./routes/authRoute.js";
@@ -48,10 +49,10 @@ const staticDir = join(__dirname);
 
 // Middlewares
 app.use(static_("build"));
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   session({
-    secret: "keyboard cat",
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false },
@@ -144,6 +145,31 @@ passport.deserializeUser(async (id, done) => {
       done(error.message);
     }
   }
+});
+
+/***************************Payments************************/
+const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY_);
+
+const calculateOrderAmount = (amount) => {
+  return amount * 100;
+};
+
+app.post("/create-payment-intent", async (req, res) => {
+  const { totalAmount } = req.body;
+
+  // Create a PaymentIntent with the order amount and currency
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: calculateOrderAmount(totalAmount),
+    currency: "inr",
+    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
+    automatic_payment_methods: {
+      enabled: true,
+    },
+  });
+
+  res.send({
+    clientSecret: paymentIntent.client_secret,
+  });
 });
 
 //Example REST Api

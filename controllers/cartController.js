@@ -185,7 +185,7 @@ export const deleteCartController = async (req, res) => {
     } else {
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ success: false, message: "Cart not found" });
     }
   } catch (error) {
     console.error("Something Went Wrong While Deleting The Cart", error);
