@@ -590,25 +590,17 @@ export const updateOrderStatusController = async (req, res) => {
 
     const orderObjectId = new Types.ObjectId(orderId);
 
-    /*****Another way of doing using findOneAndUpdate***** */
-    // const updatedOrder = await orderModel.findOneAndUpdate(
-    //   { "orders._id": orderId },
-    //   { $set: { "orders.$.status": status } },
-    //   { new: true }
-    // )
+    //Update The Order Status And Save It To The Database
+    const updateStatus = await orderModel.findOneAndUpdate(
+      { "orders._id": orderId },
+      { $set: { "orders.$.status": status } }
+    );
 
-    const updateStatusPipeline = [
-      { $unwind: "$orders" },
-      { $match: { "orders._id": orderObjectId } },
-      {
-        $set: { "orders.status": status },
-      },
-      { $out: "orders" },
-    ];
+    if(!updateStatus){
+      return res.status(404).json({success:false, message:'Order Not Found'})
+    }
 
-    const updateStatus = await orderModel.aggregate(updateStatusPipeline);
-
-    const UpdatedOrderPipeline = [
+    const pipeline = [
       { $unwind: "$orders" },
       { $match: { "orders._id": orderObjectId } },
       { $addFields: { "orders.product_id": "$orders.products.product_id" } },
@@ -694,7 +686,8 @@ export const updateOrderStatusController = async (req, res) => {
       },
     ];
 
-    const updatedOrder = await orderModel.aggregate(UpdatedOrderPipeline);
+    //Now Fetch the updated order
+    const updatedOrder = await orderModel.aggregate(pipeline);
 
     if (!updatedOrder) {
       return res
@@ -706,10 +699,6 @@ export const updateOrderStatusController = async (req, res) => {
       success: true,
       message: "Order Status Updated Successfully",
       updatedOrder,
-      /******when using findOneAndUpdate() to only get the updated Order****** */
-      // updatedOrder: updatedOrder.orders.find((order) =>
-      //   order._id.equals(orderId)
-      // ),
     });
   } catch (error) {
     console.error("Something went wrong while updating order status", error);
