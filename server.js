@@ -6,7 +6,7 @@ import { config as configDotenv } from "dotenv";
 import cors from "cors";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
+import { Strategy as JwtStrategy } from "passport-jwt";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 import Stripe from "stripe";
@@ -30,6 +30,43 @@ import {
 //create an instance of express
 const app = express();
 
+/*********************************Stripe Webhook*********************** */
+//TODO: We will capture actual order deploying on server live on public url
+// This is Stripe CLI webhook secret for testing your endpoint locally.
+const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET_KEY;
+
+app.post(
+  "/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        const paymentIntentSucceeded = event.data.object;
+        // Then define and call a function to handle the event payment_intent.succeeded
+        console.log({paymentIntentSucceeded})
+        break;
+      // ... handle other event types
+      default:
+        console.log(`Unhandled event type ${event.type}`);
+    }
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
+  }
+);
+
 //configure dotenv
 configDotenv();
 
@@ -42,10 +79,15 @@ const port = process.env.PORT || 6000;
 
 const __filename = fileURLToPath(import.meta.url);
 console.log(__filename);
+
 const __dirname = dirname(__filename);
 console.log(__dirname);
 
-const staticDir = join(__dirname);
+const rootDir = join(__dirname);
+console.log(rootDir)
+
+const buildDir = join(__dirname, 'build')
+console.log(buildDir)
 
 // Middlewares
 app.use(static_("build"));
@@ -63,7 +105,8 @@ app.use(passport.session());
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
-app.use(express.static(staticDir));
+app.use(static_(rootDir));
+app.use(static_(buildDir));
 
 //Routes
 app.use("/api/v1/auth", authRoute);
