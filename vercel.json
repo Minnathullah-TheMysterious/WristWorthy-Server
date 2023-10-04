@@ -93,10 +93,12 @@
     {
       "src": "/(.+)",
       "dest": "build/$1"
-    },
+    }
+  ],
+  "rewrites": [
     {
-      "src": "/(.*)",
-      "dest": "server.js"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
