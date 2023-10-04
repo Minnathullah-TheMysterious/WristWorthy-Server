@@ -1,102 +1,102 @@
 {
-    "builds": [
-      {
-        "src": "server.js",
-        "use": "@vercel/node"
-      },
-      {
-        "src": "build/**",
-        "use": "@vercel/static"
-      },
-      {
-        "src": "public/**",
-        "use": "@vercel/static"
-      }
-    ],
-    "routes": [
-      {
-        "src": "*",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/auth",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/auth/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/user",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/user/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/category",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/category/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/product",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/product/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/brand",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/brand/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/wishlist",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/wishlist/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/cart",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/cart/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/order",
-        "dest": "server.js"
-      },
-      {
-        "src": "/api/v1/order/(.*)",
-        "dest": "server.js"
-      },
-      {
-        "src": "/webhook",
-        "dest": "server.js"
-      },
-      {
-        "src": "/create-payment-intent",
-        "dest": "server.js"
-      },
-      {
-        "src": "/",
-        "dest": "build/index.html"
-      },
-      {
-        "src": "/(.+)",
-        "dest": "build/$1"
-      }
-    ]
-  }
+  "builds": [
+    {
+      "src": "server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "build/**",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "*",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/auth",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/auth/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/user",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/user/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/category",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/category/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/product",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/product/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/brand",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/brand/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/wishlist",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/wishlist/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/cart",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/cart/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/order",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/order/(.*)",
+      "dest": "server.js"
+    },
+    {
+      "src": "/webhook",
+      "dest": "server.js"
+    },
+    {
+      "src": "/create-payment-intent",
+      "dest": "server.js"
+    },
+    {
+      "src": "/",
+      "dest": "build/index.html"
+    },
+    {
+      "src": "/(.+)",
+      "dest": "build/$1"
+    }
+  ]
+}
