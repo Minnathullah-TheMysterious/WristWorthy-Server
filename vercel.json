@@ -15,10 +15,6 @@
   ],
   "routes": [
     {
-      "src": "*",
-      "dest": "server.js"
-    },
-    {
       "src": "/api/v1/auth",
       "dest": "server.js"
     },
@@ -97,6 +93,10 @@
     {
       "src": "/(.+)",
       "dest": "build/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "server.js"
     }
   ]
 }
