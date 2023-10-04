@@ -30,6 +30,12 @@ import {
 //create an instance of express
 const app = express();
 
+//configure dotenv
+configDotenv();
+
+//create an instance of stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY_);
+
 /*********************************Stripe Webhook*********************** */
 //TODO: We will capture actual order deploying on server live on public url
 // This is Stripe CLI webhook secret for testing your endpoint locally.
@@ -55,7 +61,7 @@ app.post(
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
         // Then define and call a function to handle the event payment_intent.succeeded
-        console.log({paymentIntentSucceeded})
+        console.log({ paymentIntentSucceeded });
         break;
       // ... handle other event types
       default:
@@ -66,9 +72,6 @@ app.post(
     response.send();
   }
 );
-
-//configure dotenv
-configDotenv();
 
 //JWT options
 const opts = {};
@@ -84,13 +87,14 @@ const __dirname = dirname(__filename);
 console.log(__dirname);
 
 const rootDir = join(__dirname);
-console.log(rootDir)
+console.log(rootDir);
 
-const buildDir = join(__dirname, 'build')
-console.log(buildDir)
+const buildDir = join(__dirname, "build");
+console.log(buildDir);
 
 // Middlewares
-app.use(static_("build"));
+app.use(static_(rootDir));
+app.use(static_(buildDir));
 app.use(cookieParser());
 app.use(
   session({
@@ -105,8 +109,6 @@ app.use(passport.session());
 app.use(cors());
 app.use(json());
 app.use(urlencoded({ extended: false }));
-app.use(static_(rootDir));
-app.use(static_(buildDir));
 
 //Routes
 app.use("/api/v1/auth", authRoute);
@@ -191,8 +193,6 @@ passport.deserializeUser(async (id, done) => {
 });
 
 /***************************Payments************************/
-const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY_);
-
 const calculateOrderAmount = (amount) => {
   return amount * 100;
 };
@@ -215,14 +215,9 @@ app.post("/create-payment-intent", async (req, res) => {
   });
 });
 
-//Example REST Api
-app.get("/", async (req, res) => {
-  res.send("Welcome to WristWorthy");
-});
-
-//Handling invalid pages
-app.use("*", (req, res) => {
-  res.status(404).json({ error: "Page Not Found" });
+// Handle all other routes by serving the main HTML file
+app.get("*", (req, res) => {
+  res.sendFile(join(__dirname, "build", "index.html"));
 });
 
 //Connecting to Database
