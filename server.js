@@ -58,10 +58,37 @@ app.post(
 
     // Handle the event
     switch (event.type) {
+      case "payment_intent.amount_capturable_updated":
+        const paymentIntentAmountCapturableUpdated = event.data.object;
+        // Then define and call a function to handle the event payment_intent.amount_capturable_updated
+        break;
+      case "payment_intent.canceled":
+        const paymentIntentCanceled = event.data.object;
+        // Then define and call a function to handle the event payment_intent.canceled
+        break;
+      case "payment_intent.created":
+        const paymentIntentCreated = event.data.object;
+        // Then define and call a function to handle the event payment_intent.created
+        break;
+      case "payment_intent.partially_funded":
+        const paymentIntentPartiallyFunded = event.data.object;
+        // Then define and call a function to handle the event payment_intent.partially_funded
+        break;
+      case "payment_intent.payment_failed":
+        const paymentIntentPaymentFailed = event.data.object;
+        // Then define and call a function to handle the event payment_intent.payment_failed
+        break;
+      case "payment_intent.processing":
+        const paymentIntentProcessing = event.data.object;
+        // Then define and call a function to handle the event payment_intent.processing
+        break;
+      case "payment_intent.requires_action":
+        const paymentIntentRequiresAction = event.data.object;
+        // Then define and call a function to handle the event payment_intent.requires_action
+        break;
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
         // Then define and call a function to handle the event payment_intent.succeeded
-        console.log({ paymentIntentSucceeded });
         break;
       // ... handle other event types
       default:
@@ -198,7 +225,7 @@ const calculateOrderAmount = (amount) => {
 };
 
 app.post("/create-payment-intent", async (req, res) => {
-  const { totalAmount, orderId } = req.body;
+  const { totalAmount, order_id } = req.body;
 
   // Create a PaymentIntent with the order amount and currency
   const paymentIntent = await stripe.paymentIntents.create({
@@ -208,7 +235,7 @@ app.post("/create-payment-intent", async (req, res) => {
     automatic_payment_methods: {
       enabled: true,
     },
-    metadata: { orderId },
+    metadata: { order_id },
   });
 
   res.send({
