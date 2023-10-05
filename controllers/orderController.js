@@ -530,6 +530,7 @@ export const getOrderByIdController = async (req, res) => {
                 totalAmount: "$$order.totalAmount",
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
+                paymentStatus: "$$order.paymentStatus",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
@@ -662,6 +663,7 @@ export const updateOrderStatusController = async (req, res) => {
                 totalAmount: "$$order.totalAmount",
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
+                paymentStatus: "$$order.paymentStatus",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",

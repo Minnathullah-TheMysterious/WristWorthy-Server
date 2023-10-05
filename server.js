@@ -26,6 +26,7 @@ import {
   isAuthenticated,
   sanitizeUser,
 } from "./helpers/authHelper.js";
+import orderModel from "./models/orderModel.js";
 
 //create an instance of express
 const app = express();
@@ -37,14 +38,13 @@ configDotenv();
 const stripe = new Stripe(process.env.STRIPE_SECRET_API_KEY_);
 
 /*********************************Stripe Webhook*********************** */
-//TODO: We will capture actual order deploying on server live on public url
 // This is Stripe CLI webhook secret for testing your endpoint locally.
 const endpointSecret = process.env.STRIPE_ENDPOINT_SECRET_KEY;
 
 app.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  (request, response) => {
+  async (request, response) => {
     const sig = request.headers["stripe-signature"];
 
     let event;
@@ -60,45 +60,114 @@ app.post(
     switch (event.type) {
       case "payment_intent.amount_capturable_updated":
         const paymentIntentAmountCapturableUpdated = event.data.object;
-        // Then define and call a function to handle the event payment_intent.amount_capturable_updated
-        console.log(paymentIntentAmountCapturableUpdated)
+        console.log(paymentIntentAmountCapturableUpdated);
         break;
+
       case "payment_intent.canceled":
         const paymentIntentCanceled = event.data.object;
-        // Then define and call a function to handle the event payment_intent.canceled
-        console.log(paymentIntentCanceled)
-        break;
+        console.log(paymentIntentCanceled);
+
+        const paymentCanceled = await orderModel.findOneAndUpdate(
+          { "orders._id": paymentIntentCanceled?.metadata?.order_id },
+          { $set: { "orders.$.paymentStatus": "canceled" } }
+        );
+
+        if (!paymentCanceled) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order Not Found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: true, message: "Payment Canceled" });
+        }
+
       case "payment_intent.created":
         const paymentIntentCreated = event.data.object;
-        // Then define and call a function to handle the event payment_intent.created
-        console.log(paymentIntentCreated)
+        console.log(paymentIntentCreated);
         break;
+
       case "payment_intent.partially_funded":
         const paymentIntentPartiallyFunded = event.data.object;
-        // Then define and call a function to handle the event payment_intent.partially_funded
-        console.log(paymentIntentPartiallyFunded)
-        break;
+        console.log(paymentIntentPartiallyFunded);
+
+        const paymentPartially_funded = await orderModel.findOneAndUpdate(
+          { "orders._id": paymentIntentPaymentFailed?.metadata?.order_id },
+          { $set: { "orders.$.paymentStatus": "partially_funded" } }
+        );
+
+        if (!paymentPartially_funded) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order Not Found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: true, message: "partially_funded" });
+        }
+
       case "payment_intent.payment_failed":
         const paymentIntentPaymentFailed = event.data.object;
-        // Then define and call a function to handle the event payment_intent.payment_failed
-        console.log(paymentIntentPaymentFailed)
-        break;
+        console.log(paymentIntentPaymentFailed);
+
+        const paymentFailed = await orderModel.findOneAndUpdate(
+          { "orders._id": paymentIntentPaymentFailed?.metadata?.order_id },
+          { $set: { "orders.$.paymentStatus": "failed" } }
+        );
+
+        if (!paymentFailed) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order Not Found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: true, message: "Payment Failed" });
+        }
+
       case "payment_intent.processing":
         const paymentIntentProcessing = event.data.object;
-        // Then define and call a function to handle the event payment_intent.processing
-        console.log(paymentIntentProcessing)
-        break;
+        console.log(paymentIntentProcessing);
+
+        const paymentProcessing = await orderModel.findOneAndUpdate(
+          { "orders._id": paymentIntentSucceeded?.metadata?.order_id },
+          { $set: { "orders.$.paymentStatus": "processing" } }
+        );
+
+        if (!paymentProcessing) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order Not Found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: true, message: "Payment Processing" });
+        }
+
       case "payment_intent.requires_action":
         const paymentIntentRequiresAction = event.data.object;
-        // Then define and call a function to handle the event payment_intent.requires_action
-        console.log(paymentIntentRequiresAction)
+        console.log(paymentIntentRequiresAction);
         break;
+
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
-        // Then define and call a function to handle the event payment_intent.succeeded
-        console.log(paymentIntentSucceeded)
-        break;
-      // ... handle other event types
+        console.log(paymentIntentSucceeded);
+
+        const paymentSuccess = await orderModel.findOneAndUpdate(
+          { "orders._id": paymentIntentSucceeded?.metadata?.order_id },
+          { $set: { "orders.$.paymentStatus": "received" } }
+        );
+
+        if (!paymentSuccess) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Order Not Found" });
+        } else {
+          return res
+            .status(200)
+            .json({ success: true, message: "Payment Received" });
+        }
+
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
