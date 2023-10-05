@@ -262,6 +262,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
                 totalAmount: "$$order.totalAmount",
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
+                paymentStatus: "$$order.paymentStatus",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
@@ -361,6 +362,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
                 totalAmount: "$$order.totalAmount",
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
+                paymentStatus: "$$order.paymentStatus",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
