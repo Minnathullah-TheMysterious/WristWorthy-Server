@@ -591,6 +591,12 @@ export const updateOrderStatusController = async (req, res) => {
         .json({ success: false, message: "Invalid Order ID" });
     }
 
+    if (!status || status.length <= 1) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please Provide Status To Update" });
+    }
+
     const orderObjectId = new Types.ObjectId(orderId);
 
     //Update The Order Status And Save It To The Database
@@ -599,8 +605,10 @@ export const updateOrderStatusController = async (req, res) => {
       { $set: { "orders.$.status": status } }
     );
 
-    if(!updateStatus){
-      return res.status(404).json({success:false, message:'Order Not Found'})
+    if (!updateStatus) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order Not Found" });
     }
 
     const pipeline = [
@@ -709,6 +717,149 @@ export const updateOrderStatusController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something went wrong while updating order status",
+      error: error.message,
+    });
+  }
+};
+
+/***********************Update Payment Status || PUT***************** */
+export const updatePaymentStatusController = async (req, res) => {
+  try {
+    const { orderId, status } = req.params;
+
+    // Validate that orderId is a valid ObjectId
+    if (!Types.ObjectId.isValid(orderId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Order ID" });
+    }
+
+    if (!status || status.length <= 1) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please Provide Status To Update" });
+    }
+
+    const orderObjectId = new Types.ObjectId(orderId);
+
+    //Update The Order Status And Save It To The Database
+    const updateStatus = await orderModel.findOneAndUpdate(
+      { "orders._id": orderId },
+      { $set: { "orders.$.paymentStatus": status } }
+    );
+
+    if (!updateStatus) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order Not Found" });
+    }
+
+    const pipeline = [
+      { $unwind: "$orders" },
+      { $match: { "orders._id": orderObjectId } },
+      { $addFields: { "orders.product_id": "$orders.products.product_id" } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "orders.product_id",
+          foreignField: "_id",
+          as: "orders.populatedProducts",
+        },
+      },
+      {
+        $addFields: {
+          "orders.populatedProducts": {
+            $map: {
+              input: "$orders.populatedProducts",
+              as: "populatedProduct",
+              in: {
+                $mergeObjects: [
+                  "$$populatedProduct",
+                  {
+                    productsOverview: {
+                      $arrayElemAt: [
+                        {
+                          $filter: {
+                            input: "$orders.products",
+                            as: "product",
+                            cond: {
+                              $eq: [
+                                "$$product.product_id",
+                                "$$populatedProduct._id",
+                              ],
+                            },
+                          },
+                        },
+                        0,
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          user: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          order: {
+            $map: {
+              input: ["$orders"],
+              as: "order",
+              in: {
+                _id: "$$order._id",
+                totalItems: "$$order.totalItems",
+                totalAmount: "$$order.totalAmount",
+                paymentMethod: "$$order.paymentMethod",
+                status: "$$order.status",
+                paymentStatus: "$$order.paymentStatus",
+                products: {
+                  $map: {
+                    input: "$$order.populatedProducts",
+                    as: "populatedProduct",
+                    in: {
+                      product_id: "$$populatedProduct._id",
+                      product_name: "$$populatedProduct.product_name",
+                      price: "$$populatedProduct.price",
+                      discountPercentage:
+                        "$$populatedProduct.discountPercentage",
+                      quantity: "$$populatedProduct.productsOverview.quantity",
+                      thumbnail: "$$populatedProduct.thumbnail",
+                      deleted: "$$populatedProduct.deleted",
+                    },
+                  },
+                },
+                shippingAddress: "$$order.shippingAddress",
+              },
+            },
+          },
+        },
+      },
+    ];
+
+    //Now Fetch the updated order
+    const updatedOrder = await orderModel.aggregate(pipeline);
+
+    if (!updatedOrder) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order Not Found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment Status Updated Successfully",
+      updatedOrder,
+    });
+  } catch (error) {
+    console.error("Something went wrong while updating Payment status", error);
+    res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating Payment status",
       error: error.message,
     });
   }

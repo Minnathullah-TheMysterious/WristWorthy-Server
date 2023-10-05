@@ -6,6 +6,7 @@ import {
   getUserOrdersController,
   placeOrderController,
   updateOrderStatusController,
+  updatePaymentStatusController,
 } from "../controllers/orderController.js";
 import { isAuthenticated } from "../helpers/authHelper.js";
 import { isAdmin } from "../middlewares/authMiddleware.js";
@@ -40,6 +41,14 @@ router.put(
   isAuthenticated(),
   isAdmin,
   updateOrderStatusController
+);
+
+//Update Payment Status
+router.put(
+  "/admin/update-payment-status/:orderId/:status",
+  isAuthenticated(),
+  isAdmin,
+  updatePaymentStatusController
 );
 
 //Cancel Order
