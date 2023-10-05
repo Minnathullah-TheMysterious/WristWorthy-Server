@@ -1,4 +1,4 @@
-import { hashPassword } from "../helpers/authHelper.js";
+import { hashPassword, sendMail } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 import twilio from "twilio";
@@ -132,7 +132,7 @@ export const loginController = async (req, res) => {
       success: true,
       message: "User Logged In successfully",
       token,
-      user:sanitizeUser(req.user)
+      user: sanitizeUser(req.user),
     });
 };
 
@@ -208,6 +208,47 @@ export const reqResetPasswordController = async (req, res) => {
       success: false,
       message: "Something Went Wrong in Resetting the Password",
       error,
+    });
+  }
+};
+
+/***************Request Reset Password*********** */
+export const reqResetPasswordMailController = async (req, res) => {
+  try {
+    const { email, resetPasswordLink } = req.body;
+    console.log(email)
+    console.log(resetPasswordLink)
+    //Validation
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+    }
+
+    //Checking for user with the given email
+    const user = await userModel.findOne({ email });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    } else {
+      const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`
+      const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}>HERE</a> To Reset Password</b></div>`;
+      const response = await sendMail(email, text, html);
+      res
+        .status(200)
+        .json({ success: true, message: "Mail Sent Successfully", response });
+    }
+  } catch (error) {
+    console.error(
+      "Something Went Wrong in passwordResetController".bgRed.white,
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong in Resetting the Password",
+      error: error.message,
     });
   }
 };
@@ -316,6 +357,61 @@ export const resetPasswordController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong in Resetting The Password",
+    });
+    console.error("Something Went Wrong in resetPasswordController", error);
+  }
+};
+
+/*****************Reset Password Via Mail|| POST************* */
+export const resetPasswordMailController = async (req, res) => {
+  try {
+    const {email, newPassword, confirmNewPassword } = req.body;
+
+    //Validation
+    switch (true) {
+      case !newPassword:
+        return res
+          .status(400)
+          .json({ success: false, message: "New Password Is Required" });
+      case !confirmNewPassword:
+        return res.status(400).json({
+          success: false,
+          message: "Please Confirm Your Password",
+        });
+      default:
+        break;
+    }
+
+    const user = await userModel.findOne({email});
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User Not Found" });
+    } else {
+      if (newPassword !== confirmNewPassword) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Passwords Does Not Match" });
+      } else {
+        console.log("Entered Into Hashing and password reset section");
+        const hashedPassword = await hashPassword(newPassword);
+        console.log("Password Hashed Successfully", hashedPassword);
+        const updatedUser = await userModel.findOneAndUpdate(
+          { email },
+          { $set: { password: hashedPassword } }
+        );
+        console.log("Updated User:", updatedUser);
+        res.status(202).json({
+          success: true,
+          message: "Password Reset Successful",
+          updatedUser,
+        });
+      }
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong during Password Reset",
     });
     console.error("Something Went Wrong in resetPasswordController", error);
   }

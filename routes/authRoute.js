@@ -7,6 +7,8 @@ import {
   verifyOtpController,
   resetPasswordController,
   logoutController,
+  reqResetPasswordMailController,
+  resetPasswordMailController,
 } from "../controllers/authController.js";
 import { isAdmin, isLoggedIn } from "../middlewares/authMiddleware.js";
 import { isAuth } from "../middlewares/authMiddleware.js";
@@ -30,11 +32,17 @@ router.post(
 // Route to request OTP for password reset
 router.post("/req-password-reset", reqResetPasswordController);
 
+// Password Reset Request Via mail
+router.post("/req-password-reset-mail", reqResetPasswordMailController);
+
 // Route to verify OTP
 router.post("/verify-otp/:userId", verifyOtpController);
 
 // Route to reset password
 router.post("/reset-password/:userId", resetPasswordController);
+
+// Route to reset password Via Mail
+router.post("/reset-password", resetPasswordMailController);
 
 // Logout
 router.post("/logout", logoutController);
@@ -48,8 +56,6 @@ router.get("/authenticate-user", isAuthenticated(), (req, res) => {
 router.get("/authenticate-admin", isAuthenticated(), isAdmin, (req, res) => {
   res.status(200).json({ ok: true });
 });
-
-
 
 /***************************TESTING********************* */
 //Private route for admin *****Testing*********

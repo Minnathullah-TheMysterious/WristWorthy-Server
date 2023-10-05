@@ -1,5 +1,6 @@
 import { hash, compare } from "bcrypt";
 import passport from "passport";
+import nodemailer from "nodemailer";
 
 //Function for hashing the password
 export const hashPassword = async (plainTextPassword) => {
@@ -33,12 +34,34 @@ export const isAuthenticated = () => {
 };
 
 //cookie extractor function
-export const cookieExtractor = function(req) {
+export const cookieExtractor = function (req) {
   let token = null;
   if (req && req.cookies) {
-      token = req.cookies['jwt'];
+    token = req.cookies["jwt"];
   }
-  /*****************TODO: This is temporary token for testing without cookie**********/
-  // token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ5Y2JmZWZkMjEwZWYzODllMjY4OTgiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2OTYxNDI1NjIsImV4cCI6MTY5Njc0NzM2Mn0.C11iOd9a_Yod4fDO35Q0t4jK2b5Xv9zH69tjOYKfPQ8"
   return token;
+};
+
+//For mail
+export const transporter = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false, //true for 465 false for other ports
+  auth: {
+    user: "minnathullahmohammed@gmail.com",
+    pass: process.env.MAIL_PASSWORD,
+  },
+});
+
+export const sendMail = async (to, text, html) => {
+  console.log(html)
+  // send mail with defined transport object
+  const info = await transporter.sendMail({
+    from: '"WristWorthy E-commerce" <minnathullahmohammed@gmail.ocm>',
+    to,
+    subject: "Reset Password For Your WristWorthy E-commerce Account ✔",
+    text,
+    html
+  });
+  return info
 };
