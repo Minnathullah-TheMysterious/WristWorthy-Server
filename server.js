@@ -61,34 +61,42 @@ app.post(
       case "payment_intent.amount_capturable_updated":
         const paymentIntentAmountCapturableUpdated = event.data.object;
         // Then define and call a function to handle the event payment_intent.amount_capturable_updated
+        console.log(paymentIntentAmountCapturableUpdated)
         break;
       case "payment_intent.canceled":
         const paymentIntentCanceled = event.data.object;
         // Then define and call a function to handle the event payment_intent.canceled
+        console.log(paymentIntentCanceled)
         break;
       case "payment_intent.created":
         const paymentIntentCreated = event.data.object;
         // Then define and call a function to handle the event payment_intent.created
+        console.log(paymentIntentCreated)
         break;
       case "payment_intent.partially_funded":
         const paymentIntentPartiallyFunded = event.data.object;
         // Then define and call a function to handle the event payment_intent.partially_funded
+        console.log(paymentIntentPartiallyFunded)
         break;
       case "payment_intent.payment_failed":
         const paymentIntentPaymentFailed = event.data.object;
         // Then define and call a function to handle the event payment_intent.payment_failed
+        console.log(paymentIntentPaymentFailed)
         break;
       case "payment_intent.processing":
         const paymentIntentProcessing = event.data.object;
         // Then define and call a function to handle the event payment_intent.processing
+        console.log(paymentIntentProcessing)
         break;
       case "payment_intent.requires_action":
         const paymentIntentRequiresAction = event.data.object;
         // Then define and call a function to handle the event payment_intent.requires_action
+        console.log(paymentIntentRequiresAction)
         break;
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
         // Then define and call a function to handle the event payment_intent.succeeded
+        console.log(paymentIntentSucceeded)
         break;
       // ... handle other event types
       default:

@@ -17,6 +17,7 @@ const orderSchema = new Schema(
         //we can add enum types
         paymentMethod: String,
         status: { type: String, default: "pending" },
+        paymentStatus: { type: String, default: "pending" },
       },
     ],
   },
