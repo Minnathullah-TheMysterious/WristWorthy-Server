@@ -1,6 +1,7 @@
 import { hash, compare } from "bcrypt";
 import passport from "passport";
 import nodemailer from "nodemailer";
+import token from "crypto-token";
 
 //Function for hashing the password
 export const hashPassword = async (plainTextPassword) => {
@@ -42,7 +43,7 @@ export const cookieExtractor = function (req) {
   return token;
 };
 
-//For mail
+/*************For mail****************/
 export const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
@@ -54,14 +55,23 @@ export const transporter = nodemailer.createTransport({
 });
 
 export const sendMail = async (to, text, html) => {
-  console.log(html)
+  console.log(html);
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"WristWorthy E-commerce" <minnathullahmohammed@gmail.ocm>',
     to,
     subject: "Reset Password For Your WristWorthy E-commerce Account ✔",
     text,
-    html
+    html,
   });
-  return info
+  return info;
+};
+
+export const generateToken = async () => {
+  try {
+    const response = await token(52);
+    return { success: true, token: response };
+  } catch (error) {
+    return { success: true, token: response, error: error.message };
+  }
 };

@@ -43,7 +43,8 @@ const userSchema = new Schema(
       },
     ],
     role: { type: String, default: "user" },
-    otpSecret: { type: String }, // Store the OTP secret here
+    otpSecret: { type: String }, // Store the OTP secret
+    token: { type: String, default: " " },
   },
   { timestamps: true }
 );

@@ -1,4 +1,8 @@
-import { hashPassword, sendMail } from "../helpers/authHelper.js";
+import {
+  generateToken,
+  hashPassword,
+  sendMail,
+} from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 import twilio from "twilio";
@@ -212,12 +216,12 @@ export const reqResetPasswordController = async (req, res) => {
   }
 };
 
-/***************Request Reset Password*********** */
+/***************Request Reset Password Via Mail*********** */
 export const reqResetPasswordMailController = async (req, res) => {
   try {
     const { email, resetPasswordLink } = req.body;
-    console.log(email)
-    console.log(resetPasswordLink)
+    console.log(email);
+    console.log(resetPasswordLink);
     //Validation
     if (!email) {
       return res
@@ -233,12 +237,30 @@ export const reqResetPasswordMailController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "User not found" });
     } else {
-      const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`
-      const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}>HERE</a> To Reset Password</b></div>`;
-      const response = await sendMail(email, text, html);
-      res
-        .status(200)
-        .json({ success: true, message: "Mail Sent Successfully", response });
+      const { token, success } = await generateToken();
+      console.log(token);
+      if (!success) {
+        return res
+          .status(500)
+          .json({ success: false, message: "Failed to generate token" });
+      } else {
+        user.token = token;
+        await user.save();
+
+        const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
+        const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}/${token}>HERE</a> To Reset Password</b></div>`;
+        const response = await sendMail(email, text, html);
+        if (!response.accepted.length) {
+          return res
+            .status(500)
+            .json({ success: false, message: "Failed To Send Mail" });
+        } else {
+          res.status(200).json({
+            success: true,
+            message: "Mail Sent Successfully",
+          });
+        }
+      }
     }
   } catch (error) {
     console.error(
@@ -346,7 +368,7 @@ export const resetPasswordController = async (req, res) => {
           { $set: { password: hashedPassword } }
         );
         console.log("Updated User:", updatedUser);
-        res.status(202).json({
+        res.status(200).json({
           success: true,
           message: "Password Reset Successful",
           updatedUser,
@@ -365,7 +387,8 @@ export const resetPasswordController = async (req, res) => {
 /*****************Reset Password Via Mail|| POST************* */
 export const resetPasswordMailController = async (req, res) => {
   try {
-    const {email, newPassword, confirmNewPassword } = req.body;
+    const { email, newPassword, confirmNewPassword, token } = req.body;
+    console.log(email, token);
 
     //Validation
     switch (true) {
@@ -382,11 +405,11 @@ export const resetPasswordMailController = async (req, res) => {
         break;
     }
 
-    const user = await userModel.findOne({email});
+    const user = await userModel.findOne({ email, token });
     if (!user) {
       return res
-        .status(404)
-        .json({ success: false, message: "User Not Found" });
+        .status(301)
+        .json({ success: false, message: "Link Has Been Expired" });
     } else {
       if (newPassword !== confirmNewPassword) {
         return res
@@ -400,8 +423,14 @@ export const resetPasswordMailController = async (req, res) => {
           { email },
           { $set: { password: hashedPassword } }
         );
+        //Reset The Token immediately after user resets the password
+        const { success, token } = await generateToken();
+        if (success) {
+          user.token = token;
+          await user.save();
+        }
         console.log("Updated User:", updatedUser);
-        res.status(202).json({
+        res.status(200).json({
           success: true,
           message: "Password Reset Successful",
           updatedUser,
