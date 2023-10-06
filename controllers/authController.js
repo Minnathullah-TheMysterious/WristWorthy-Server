@@ -108,6 +108,7 @@ export const registerController = async (req, res) => {
             success: true,
             message: "User Registered Successfully",
             token,
+            user: sanitizeUser(user),
           });
       });
     }
@@ -126,7 +127,7 @@ export const loginController = async (req, res) => {
   const token = JWT.sign(sanitizeUser(req.user), process.env.JWT_SECRET_KEY, {
     expiresIn: "7d",
   });
-  res
+  return res
     .cookie("jwt", token, {
       expires: new Date(Date.now() + 3600000),
       httpOnly: true,
@@ -138,6 +139,19 @@ export const loginController = async (req, res) => {
       token,
       user: sanitizeUser(req.user),
     });
+};
+
+/*****************Logout || POST************* */
+export const logoutController = (req, res) => {
+  req.logout(() => {
+    return res
+      .cookie("jwt", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+      })
+      .status(200)
+      .json({ success: true, message: "user logged out successfully" });
+  });
 };
 
 /***************Request Reset Password*********** */
@@ -247,9 +261,11 @@ export const reqResetPasswordMailController = async (req, res) => {
         user.token = token;
         await user.save();
 
+        const subject =
+          "Reset Password For Your WristWorthy E-commerce Account ✔";
         const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
         const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}/${token}>HERE</a> To Reset Password</b></div>`;
-        const response = await sendMail(email, text, html);
+        const response = await sendMail(email, subject, text, html);
         if (!response.accepted.length) {
           return res
             .status(500)
@@ -423,6 +439,14 @@ export const resetPasswordMailController = async (req, res) => {
           { email },
           { $set: { password: hashedPassword } }
         );
+
+        //Send the mail to user after successful password reset
+        const subject =
+          "Password has been successfully reset For Your WristWorthy E-commerce Account ✔";
+        const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
+        const html = `<b>HI! ${user?.user_name}, Hope Your Are Doing Great. Your Password has been Reset Successfully</b>`;
+        await sendMail(email, subject, text, html);
+
         //Reset The Token immediately after user resets the password
         const { success, token } = await generateToken();
         if (success) {
@@ -444,11 +468,4 @@ export const resetPasswordMailController = async (req, res) => {
     });
     console.error("Something Went Wrong in resetPasswordController", error);
   }
-};
-
-/*****************Logout || POST************* */
-export const logoutController = (req, res) => {
-  req.logout(() => {
-    return res.json({ success: true, message: "user logged out successfully" });
-  });
 };

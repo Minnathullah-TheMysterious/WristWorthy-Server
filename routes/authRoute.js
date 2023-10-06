@@ -29,6 +29,9 @@ router.post(
   loginController
 );
 
+// Logout
+router.post("/logout", logoutController);
+
 // Route to request OTP for password reset
 router.post("/req-password-reset", reqResetPasswordController);
 
@@ -43,9 +46,6 @@ router.post("/reset-password/:userId", resetPasswordController);
 
 // Route to reset password Via Mail
 router.post("/reset-password", resetPasswordMailController);
-
-// Logout
-router.post("/logout", logoutController);
 
 //User Protected Route
 router.get("/authenticate-user", isAuthenticated(), (req, res) => {

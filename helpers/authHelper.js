@@ -54,13 +54,13 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-export const sendMail = async (to, text, html) => {
+export const sendMail = async (to,subject, text, html) => {
   console.log(html);
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"WristWorthy E-commerce" <minnathullahmohammed@gmail.ocm>',
     to,
-    subject: "Reset Password For Your WristWorthy E-commerce Account ✔",
+    subject ,
     text,
     html,
   });
