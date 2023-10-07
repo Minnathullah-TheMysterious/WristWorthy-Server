@@ -395,90 +395,36 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       _page,
       _limit,
     } = req.query;
-
-    let findQueryObject = {};
-    let sortQueryObject = {};
+    
     const pageNum = _page || 1;
     const limit = _limit || 8;
     const skip = (pageNum - 1) * limit;
 
-    //Check For Query Params
+    let findQueryObject = {};
+
     if (brand) {
-      findQueryObject = { brand };
-      console.log(findQueryObject);
+      findQueryObject.brand = brand;
     }
+
     if (category) {
-      findQueryObject = { category };
+      findQueryObject.category = category;
     }
-    if (
-      lowerPriceLimit &&
-      higherPriceLimit &&
-      !isNaN(lowerPriceLimit) &&
-      !isNaN(higherPriceLimit)
-    ) {
-      findQueryObject = {
-        price: {
-          $gte: parseFloat(lowerPriceLimit),
-          $lte: parseFloat(higherPriceLimit),
-        },
+
+    if (lowerPriceLimit && higherPriceLimit) {
+      findQueryObject.price = {
+        $gte: parseFloat(+lowerPriceLimit),
+        $lte: parseFloat(+higherPriceLimit),
       };
     }
-    if (brand && category) {
-      findQueryObject = { brand, category };
-    }
-    if (
-      brand &&
-      lowerPriceLimit &&
-      higherPriceLimit &&
-      !isNaN(lowerPriceLimit) &&
-      !isNaN(higherPriceLimit)
-    ) {
-      findQueryObject = {
-        brand,
-        price: {
-          $gte: parseFloat(lowerPriceLimit),
-          $lte: parseFloat(higherPriceLimit),
-        },
-      };
-    }
-    if (
-      category &&
-      lowerPriceLimit &&
-      higherPriceLimit &&
-      !isNaN(lowerPriceLimit) &&
-      !isNaN(higherPriceLimit)
-    ) {
-      findQueryObject = {
-        category,
-        price: {
-          $gte: parseFloat(lowerPriceLimit),
-          $lte: parseFloat(higherPriceLimit),
-        },
-      };
-    }
-    if (
-      brand &&
-      category &&
-      lowerPriceLimit &&
-      higherPriceLimit &&
-      !isNaN(lowerPriceLimit) &&
-      !isNaN(higherPriceLimit)
-    ) {
-      findQueryObject = {
-        brand,
-        category,
-        price: {
-          $gte: parseFloat(lowerPriceLimit),
-          $lte: parseFloat(higherPriceLimit),
-        },
-      };
-    }
-    ///////////////
+
+    let sortQueryObject = {};
+
     if (_sort && _order && _sort === "price") {
       //_order should be 1(asc) or -1(desc)
       console.log(_order);
       sortQueryObject.price = _order;
     }
+
     if (_sort && _order && _sort === "rating") {
       console.log(_order);
       sortQueryObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
@@ -497,6 +443,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     const filteredNonDeletedProducts = await productModel
       .find(nonDeletedFindQueryObject)
       .sort(sortQueryObject)
+      .sort({ createdAt: -1 })
       .populate("category")
       .populate("brand")
       .limit(limit)
@@ -505,6 +452,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     const filteredProducts = await productModel
       .find(findQueryObject)
       .sort(sortQueryObject)
+      .sort({ createdAt: -1 })
       .populate("category")
       .populate("brand")
       .limit(limit)
@@ -626,13 +574,11 @@ export const updateProductStockController = async (req, res) => {
       const stock = product.stock;
       product.stock = stock - +productQuantity;
       await product.save();
-      return res
-        .status(200)
-        .json({
-          success: true,
-          message: "Product Stock Updated Successfully",
-          product,
-        });
+      return res.status(200).json({
+        success: true,
+        message: "Product Stock Updated Successfully",
+        product,
+      });
     }
   } catch (error) {
     console.error(

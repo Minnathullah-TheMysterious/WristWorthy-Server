@@ -217,7 +217,7 @@ export const restoreBrandsController = async (req, res) => {
 /**************Get All Brands || GET********** */
 export const getAllBrandsController = async (req, res) => {
   try {
-    const brands = await brandModel.find();
+    const brands = await brandModel.find().sort({createdAt:-1});
 
     res.status(200).json({
       success: true,

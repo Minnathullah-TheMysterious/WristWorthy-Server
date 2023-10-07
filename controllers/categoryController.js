@@ -163,7 +163,7 @@ export const updateCategoryController = async (req, res) => {
 /*************Get All Categories || GET********** */
 export const getAllCategoriesController = async (req, res) => {
   try {
-    const categories = await categoryModel.find();
+    const categories = await categoryModel.find().sort({createdAt:-1});
 
     res.status(200).json({
       success: true,

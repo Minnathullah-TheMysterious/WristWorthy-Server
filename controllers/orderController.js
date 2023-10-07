@@ -117,10 +117,18 @@ export const getUserOrdersController = async (req, res) => {
 /*****************Fetch All Orders || GET************** */
 export const getAllFilteredOrdersController = async (req, res) => {
   try {
-    const { order_id, order_status, _page, _limit } = req.query;
-    console.log(
-      `order_id: ${order_id}; order_status: ${order_status}; _page: ${_page}; _limit: ${_limit}`
-    );
+    const {
+      order_id,
+      order_status,
+      payment_status,
+      _page,
+      payment_method,
+      _limit,
+      createdAt,
+      updatedAt,
+      amount,
+      item,
+    } = req.query;
 
     const pageNum = _page || 1;
     const limit = _limit || 8;
@@ -130,73 +138,39 @@ export const getAllFilteredOrdersController = async (req, res) => {
     let matchQueryObject = {};
 
     if (order_status) {
-      matchQueryObject = { "orders.status": order_status };
+      matchQueryObject["orders.status"] = order_status;
     }
+
     if (order_id) {
-      matchQueryObject = { "orders._id": orderIdAsObjectId };
+      matchQueryObject["orders._id"] = orderIdAsObjectId;
     }
-    if (order_id && order_status) {
-      matchQueryObject = {
-        "orders._id": orderIdAsObjectId,
-        "orders.status": order_status,
-      };
+
+    if (payment_status) {
+      matchQueryObject["orders.paymentStatus"] = payment_status;
+    }
+
+    if (payment_method) {
+      matchQueryObject["orders.paymentMethod"] = payment_method;
     }
 
     console.log(matchQueryObject);
 
-    // const ordersAfterLookup = await orderModel.aggregate([
-    //   { $unwind: "$orders" },
-    //   { $match: matchQueryObject },
-    //   {
-    //     $addFields: { "orders.product_id": "$orders.products.product_id" },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "products",
-    //       localField: "orders.product_id",
-    //       foreignField: "_id",
-    //       as: "orders.populatedProducts",
-    //     },
-    //   },
-    //   {
-    //     $addFields: {
-    //       "orders.populatedProducts": {
-    //         $map: {
-    //           input: "$orders.populatedProducts",
-    //           as: "populatedProduct",
-    //           in: {
-    //             $mergeObjects: [
-    //               "$$populatedProduct",
-    //               {
-    //                 productsOverview: {
-    //                   $arrayElemAt: [
-    //                     {
-    //                       $filter: {
-    //                         input: "$orders.products",
-    //                         as: "product",
-    //                         cond: {
-    //                           $eq: [
-    //                             "$$product.product_id",
-    //                             "$$populatedProduct._id",
-    //                           ],
-    //                         },
-    //                       },
-    //                     },
-    //                     0,
-    //                   ],
-    //                 },
-    //               },
-    //             ],
-    //           },
-    //         },
-    //       },
-    //     },
-    //   },
-    // ]);
-    // console.log(
-    //   "Orders After $lookup",
-    //   JSON.stringify(ordersAfterLookup, null, 2)
-    // );
+    let sortQueryObject = { "order.createdAt": -1 };
+
+    if (createdAt) {
+      sortQueryObject = { "order.createdAt": +createdAt };
+    }
+    if (updatedAt) {
+      sortQueryObject = { "order.updatedAt": +updatedAt };
+    }
+    if (amount) {
+      sortQueryObject = { "order.totalAmount": +amount };
+    }
+    if (item) {
+      sortQueryObject = { "order.totalItems": +item };
+    }
+
+    console.log(sortQueryObject);
 
     const ordersPipeline = [
       { $unwind: "$orders" },
@@ -250,8 +224,6 @@ export const getAllFilteredOrdersController = async (req, res) => {
         $project: {
           _id: 1,
           user: 1,
-          createdAt: 1,
-          updatedAt: 1,
           order: {
             $map: {
               input: ["$orders"],
@@ -263,6 +235,8 @@ export const getAllFilteredOrdersController = async (req, res) => {
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
                 paymentStatus: "$$order.paymentStatus",
+                createdAt: "$$order.createdAt",
+                updatedAt: "$$order.updatedAt",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
@@ -292,7 +266,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
         $limit: +limit,
       },
       {
-        $sort: { updatedAt: -1 },
+        $sort: sortQueryObject,
       },
     ];
 
@@ -350,8 +324,6 @@ export const getAllFilteredOrdersController = async (req, res) => {
         $project: {
           _id: 1,
           user: 1,
-          createdAt: 1,
-          updatedAt: 1,
           order: {
             $map: {
               input: ["$orders"],
@@ -363,6 +335,8 @@ export const getAllFilteredOrdersController = async (req, res) => {
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
                 paymentStatus: "$$order.paymentStatus",
+                createdAt: "$$order.createdAt",
+                updatedAt: "$$order.updatedAt",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
@@ -661,8 +635,6 @@ export const updateOrderStatusController = async (req, res) => {
         $project: {
           _id: 1,
           user: 1,
-          createdAt: 1,
-          updatedAt: 1,
           order: {
             $map: {
               input: ["$orders"],
@@ -674,6 +646,8 @@ export const updateOrderStatusController = async (req, res) => {
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
                 paymentStatus: "$$order.paymentStatus",
+                createdAt: "$$order.createdAt",
+                updatedAt: "$$order.updatedAt",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
@@ -804,8 +778,6 @@ export const updatePaymentStatusController = async (req, res) => {
         $project: {
           _id: 1,
           user: 1,
-          createdAt: 1,
-          updatedAt: 1,
           order: {
             $map: {
               input: ["$orders"],
@@ -817,6 +789,8 @@ export const updatePaymentStatusController = async (req, res) => {
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
                 paymentStatus: "$$order.paymentStatus",
+                createdAt: "$$order.createdAt",
+                updatedAt: "$$order.updatedAt",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",
