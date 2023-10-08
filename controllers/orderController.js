@@ -1,5 +1,7 @@
 import { Types } from "mongoose";
 import orderModel from "../models/orderModel.js";
+import { invoiceHtmlTemplate, sendMail } from "../services/common.js";
+import userModel from "./../models/userModel.js";
 
 /*****************placing an order || POST************** */
 export const placeOrderController = async (req, res) => {
@@ -17,7 +19,7 @@ export const placeOrderController = async (req, res) => {
     if (!products) {
       return res
         .status(400)
-        .json({ success: false, message: "Products are required" });
+        .json({ success: false, message: "Product is required" });
     }
     if (!totalItems) {
       return res
@@ -40,11 +42,17 @@ export const placeOrderController = async (req, res) => {
         .json({ success: false, message: "Payment Method is required" });
     }
 
-    const user = await orderModel
+    const userOrders = await orderModel
       .findOne({ user: _id })
       .populate("orders.products.product_id");
-    //Check For User
-    if (!user) {
+
+    const userInfo = await userModel.findById(_id);
+
+    const subject = "Order Placed Successfully";
+    const text = `Dear ${userInfo?.user_name}! Thank You For Ordering. You Order Has Been Placed Successfully`;
+
+    //Check For User orders
+    if (!userOrders) {
       const newUserOrder = new orderModel({
         user: _id,
         orders: [
@@ -57,22 +65,53 @@ export const placeOrderController = async (req, res) => {
           },
         ],
       });
-      const orders = await newUserOrder.save();
+
+      await newUserOrder.save();
+
+      const order = await orderModel
+        .findOne({ user: _id })
+        .populate("orders.products.product_id");
+
+      const placedOrder = order?.orders[0];
+
+      sendMail(
+        userInfo?.email,
+        subject,
+        text,
+        invoiceHtmlTemplate(placedOrder)
+      );
+
       return res
         .status(201)
-        .json({ success: true, message: "Order Placed Successfully", orders });
+        .json({ success: true, message: "Order Placed Successfully", order, placedOrder });
     } else {
-      user.orders = user.orders.concat({
+      userOrders.orders = userOrders.orders.concat({
         products,
         totalItems,
         totalAmount,
         shippingAddress,
         paymentMethod,
       });
-      const orders = await user.save();
-      return res
-        .status(201)
-        .json({ success: true, message: "Order Placed Successfully", orders });
+      await userOrders.save();
+
+      const orders = await orderModel
+        .findOne({ user: _id })
+        .populate("orders.products.product_id");
+
+      const placedOrder = orders?.orders[orders?.orders?.length - 1];
+
+      sendMail(
+        userInfo?.email,
+        subject,
+        text,
+        invoiceHtmlTemplate(placedOrder)
+      );
+
+      return res.status(201).json({
+        success: true,
+        message: "Order Placed Successfully",
+        orders,
+      });
     }
   } catch (error) {
     console.error("Something went wrong while placing an order", error);
@@ -507,6 +546,8 @@ export const getOrderByIdController = async (req, res) => {
                 paymentMethod: "$$order.paymentMethod",
                 status: "$$order.status",
                 paymentStatus: "$$order.paymentStatus",
+                createdAt: "$$order.createdAt",
+                updatedAt: "$$order.updatedAt",
                 products: {
                   $map: {
                     input: "$$order.populatedProducts",

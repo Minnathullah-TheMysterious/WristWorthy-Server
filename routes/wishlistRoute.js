@@ -4,7 +4,7 @@ import {
   deleteWishlistItemController,
   getWishlistController,
 } from "../controllers/wishlistController.js";
-import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAuthenticated } from "../services/common.js";
 
 const router = Router();
 

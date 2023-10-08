@@ -10,9 +10,9 @@ import {
   reqResetPasswordMailController,
   resetPasswordMailController,
 } from "../controllers/authController.js";
-import { isAdmin, isLoggedIn } from "../middlewares/authMiddleware.js";
+import { isAdmin } from "../middlewares/authMiddleware.js";
 import { isAuth } from "../middlewares/authMiddleware.js";
-import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAuthenticated } from "../services/common.js";
 
 //Enable Express Router
 const router = Router();
@@ -58,16 +58,6 @@ router.get("/authenticate-admin", isAuthenticated(), isAdmin, (req, res) => {
 });
 
 /***************************TESTING********************* */
-//Private route for admin *****Testing*********
-router.get("/admin-route", isLoggedIn, isAdmin, (req, res) => {
-  res.status(200).json({ success: true, message: "Admin Protected route" });
-});
-
-//Private Route for LoggedIn user ******* Testing *********
-router.get("/protected", isLoggedIn, (req, res) => {
-  res.status(200).json({ success: true, message: "Protected Route" });
-});
-
 //Check for Logged in user *****Testing*********
 router.get("/logged-in-user-check-local-strategy", isAuth, (req, res) => {
   res

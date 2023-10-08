@@ -6,7 +6,7 @@ import {
   getUserDataController,
   updateUserAddressController,
 } from "../controllers/userController.js";
-import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAuthenticated } from "../services/common.js";
 
 const router = Router();
 

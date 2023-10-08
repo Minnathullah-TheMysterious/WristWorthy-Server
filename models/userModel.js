@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 import speakeasy from "speakeasy";
-import { hashPassword } from "../helpers/authHelper.js";
+import { hashPassword } from "../services/common.js";
 
 const userSchema = new Schema(
   {

@@ -1,13 +1,9 @@
-import {
-  generateToken,
-  hashPassword,
-  sendMail,
-} from "../helpers/authHelper.js";
+import { generateToken, hashPassword, sendMail } from "../services/common.js";
 import userModel from "../models/userModel.js";
 import JWT from "jsonwebtoken";
 import twilio from "twilio";
 import speakeasy from "speakeasy";
-import { sanitizeUser } from "./../helpers/authHelper.js";
+import { sanitizeUser } from "../services/common.js";
 
 // ***************Register || POST**************/
 export const registerController = async (req, res) => {

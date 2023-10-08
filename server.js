@@ -25,7 +25,7 @@ import {
   cookieExtractor,
   isAuthenticated,
   sanitizeUser,
-} from "./helpers/authHelper.js";
+} from "./services/common.js";
 import orderModel from "./models/orderModel.js";
 
 //create an instance of express
@@ -228,7 +228,6 @@ app.use("/api/v1/order", isAuthenticated(), orderRoute);
 passport.use(
   "local",
   new LocalStrategy(async (username, password, done) => {
-    console.log(`username: ${username} \n password:${password}`);
     try {
       const user = await userModel.findOne({
         $or: [{ email: username }, { phone: username }],
@@ -253,17 +252,13 @@ passport.use(
 passport.use(
   "jwt",
   new JwtStrategy(opts, async function (jwt_payload, done) {
-    console.log("jwt_payload:", jwt_payload);
-    console.log("jwt_payload._id", jwt_payload._id);
     try {
       const user = await userModel.findOne({ _id: jwt_payload._id });
       console.log("user", user);
       if (user) {
         return done(null, sanitizeUser(user)); //calls serializer
       } else {
-        console.log("Im here");
         return done(null, false);
-        // or you could create a new account
       }
     } catch (error) {
       return done(err, false);
@@ -273,9 +268,7 @@ passport.use(
 
 //serializer
 passport.serializeUser((user, done) => {
-  console.log("from serializer:", user);
   if (user) {
-    console.log(user);
     return done(null, user._id);
   }
   return done(null, false);

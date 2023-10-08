@@ -8,7 +8,7 @@ import {
   updateBrandController,
   updateBrandImageController,
 } from "../controllers/brandController.js";
-import { isAuthenticated } from "../helpers/authHelper.js";
+import { isAuthenticated } from "../services/common.js";
 import { isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = Router();
