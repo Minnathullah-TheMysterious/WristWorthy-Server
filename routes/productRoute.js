@@ -4,6 +4,7 @@ import {
   createProductController,
   deleteProductController,
   getFilteredAndSortedProductsController,
+  getRelatedProductController,
   getSelectedProductController,
   restoreProductController,
   testProductRouteController,
@@ -74,6 +75,9 @@ router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 
 //Get Product By Id
 router.get("/get-selected-product/:productId", getSelectedProductController);
+
+//Get Related Products By Categories
+router.get("/get-related-products/:categoryId", getRelatedProductController);
 
 //Delete Product
 router.delete(

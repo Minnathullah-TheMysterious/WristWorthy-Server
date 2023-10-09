@@ -1,6 +1,6 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose, { Types, isValidObjectId } from "mongoose";
 import { promises as fsPromises, constants as fsConstants } from "fs";
 
 /****************Create Product || POST**************** */
@@ -500,6 +500,40 @@ export const getSelectedProductController = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching the selected product",
+      error: error.message,
+    });
+  }
+};
+
+/****************Get Related Products By category ID || GET*********** */
+export const getRelatedProductController = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    console.log(categoryId)
+
+    const categoryObjectId = new Types.ObjectId(categoryId)
+
+    const relatedProducts = await productModel.find({category: categoryObjectId});
+    if (!relatedProducts) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Related Products Not Found" });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "Related Products Fetched Successfully",
+        relatedProducts,
+      });
+    }
+  } catch (error) {
+    console.error(
+      "Something Went Wrong While Fetching the Related products",
+      error
+    );
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While Fetching the Related products",
       error: error.message,
     });
   }
