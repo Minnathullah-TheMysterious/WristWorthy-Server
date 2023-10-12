@@ -10,6 +10,11 @@ export const createProductController = async (req, res) => {
   const {
     product_name,
     description,
+    highlight_1,
+    highlight_2,
+    highlight_3,
+    highlight_4,
+    highlight_5,
     price,
     discountPercentage,
     stock,
@@ -92,6 +97,14 @@ export const createProductController = async (req, res) => {
       });
     }
 
+    const highlights = [
+      highlight_1,
+      highlight_2,
+      highlight_3,
+      highlight_4,
+      highlight_5,
+    ];
+
     const images = [
       {
         location: image_1[0]?.path,
@@ -120,6 +133,7 @@ export const createProductController = async (req, res) => {
     ];
 
     const existingProduct = await productModel.findOne({ product_name });
+
     if (existingProduct) {
       return res.status(409).json({
         success: false,
@@ -130,16 +144,19 @@ export const createProductController = async (req, res) => {
         let brandId = mongoose.Types.ObjectId.createFromHexString(brand);
         brand = brandId;
       }
+
       if (isValidObjectId(category)) {
         let categoryId = mongoose.Types.ObjectId.createFromHexString(category);
         category = categoryId;
       }
+
       const data = new productModel({
         product_name,
         slug: slugify(product_name),
         brand,
         category,
         description,
+        highlights,
         stock,
         price,
         discountPercentage,
@@ -175,19 +192,32 @@ export const createProductController = async (req, res) => {
 
 /*******************Update Product || PUT******************* */
 export const updateProductController = async (req, res) => {
-  const {
-    product_name,
-    description,
-    price,
-    discountPercentage,
-    stock,
-    rating,
-    brand,
-    category,
-  } = req.body;
-  const { productId } = req.params;
-
   try {
+    const {
+      product_name,
+      description,
+      price,
+      discountPercentage,
+      stock,
+      rating,
+      brand,
+      category,
+      highlight_1,
+      highlight_2,
+      highlight_3,
+      highlight_4,
+      highlight_5,
+    } = req.body;
+    const { productId } = req.params;
+
+    const highlights = [
+      highlight_1,
+      highlight_2,
+      highlight_3,
+      highlight_4,
+      highlight_5,
+    ];
+
     //validation
     if (!product_name) {
       return res
@@ -237,6 +267,7 @@ export const updateProductController = async (req, res) => {
       price,
       discountPercentage,
       rating,
+      highlights
     };
 
     const updatedProduct = await productModel.findByIdAndUpdate(
@@ -395,7 +426,7 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       _page,
       _limit,
     } = req.query;
-    
+
     const pageNum = _page || 1;
     const limit = _limit || 8;
     const skip = (pageNum - 1) * limit;
@@ -510,11 +541,13 @@ export const getRelatedProductController = async (req, res) => {
   try {
     const { categoryId } = req.params;
 
-    console.log(categoryId)
+    console.log(categoryId);
 
-    const categoryObjectId = new Types.ObjectId(categoryId)
+    const categoryObjectId = new Types.ObjectId(categoryId);
 
-    const relatedProducts = await productModel.find({category: categoryObjectId});
+    const relatedProducts = await productModel.find({
+      category: categoryObjectId,
+    });
     if (!relatedProducts) {
       return res
         .status(404)

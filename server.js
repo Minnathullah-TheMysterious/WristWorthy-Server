@@ -20,6 +20,7 @@ import brandRoute from "./routes/brandRoute.js";
 import wishlistRoute from "./routes/wishlistRoute.js";
 import cartRoute from "./routes/cartRoute.js";
 import orderRoute from "./routes/orderRoute.js";
+import promoRoute from "./routes/promoRoute.js";
 import {
   comparePassword,
   cookieExtractor,
@@ -223,6 +224,7 @@ app.use("/api/v1/brand", brandRoute);
 app.use("/api/v1/wishlist", isAuthenticated(), wishlistRoute);
 app.use("/api/v1/cart", isAuthenticated(), cartRoute);
 app.use("/api/v1/order", isAuthenticated(), orderRoute);
+app.use("/api/v1/promo", promoRoute);
 
 //local strategy
 passport.use(

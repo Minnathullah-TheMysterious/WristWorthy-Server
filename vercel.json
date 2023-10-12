@@ -79,6 +79,14 @@
       "dest": "server.js"
     },
     {
+      "src": "/api/v1/promo",
+      "dest": "server.js"
+    },
+    {
+      "src": "/api/v1/promo/(.*)",
+      "dest": "server.js"
+    },
+    {
       "src": "/webhook",
       "dest": "server.js"
     },
@@ -88,6 +96,10 @@
     },
     {
       "src": "/public/(.*)",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "public/(.*)",
       "dest": "/public/$1"
     },
     {
