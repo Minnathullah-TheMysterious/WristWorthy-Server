@@ -267,7 +267,7 @@ export const updateProductController = async (req, res) => {
       price,
       discountPercentage,
       rating,
-      highlights
+      highlights,
     };
 
     const updatedProduct = await productModel.findByIdAndUpdate(
@@ -539,26 +539,31 @@ export const getSelectedProductController = async (req, res) => {
 /****************Get Related Products By category ID || GET*********** */
 export const getRelatedProductController = async (req, res) => {
   try {
-    const { categoryId } = req.params;
+    const { categoryId, productId } = req.params;
 
-    console.log(categoryId);
+    console.log(categoryId, productId);
 
     const categoryObjectId = new Types.ObjectId(categoryId);
 
-    const relatedProducts = await productModel.find({
+    const products = await productModel.find({
       category: categoryObjectId,
     });
-    if (!relatedProducts) {
+
+    if (!products) {
       return res
         .status(404)
         .json({ success: false, message: "Related Products Not Found" });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "Related Products Fetched Successfully",
-        relatedProducts,
-      });
     }
+
+    const relatedProducts = products?.filter(
+      (product) => product._id.toString() !== productId
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Related Products Fetched Successfully",
+      relatedProducts,
+    });
   } catch (error) {
     console.error(
       "Something Went Wrong While Fetching the Related products",

@@ -77,8 +77,8 @@ router.get("/get-filtered-products", getFilteredAndSortedProductsController);
 //Get Product By Id
 router.get("/get-selected-product/:productId", getSelectedProductController);
 
-//Get Related Products By Categories
-router.get("/get-related-products/:categoryId", getRelatedProductController);
+//Get Related Products By Category & productId
+router.get("/get-related-products/:categoryId/:productId", getRelatedProductController);
 
 //Delete Product
 router.delete(
