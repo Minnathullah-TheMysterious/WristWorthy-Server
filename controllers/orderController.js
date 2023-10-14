@@ -21,21 +21,25 @@ export const placeOrderController = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Product is required" });
     }
+
     if (!totalItems) {
       return res
         .status(400)
         .json({ success: false, message: "Total Items is required" });
     }
+
     if (!totalAmount) {
       return res
         .status(400)
         .json({ success: false, message: "Total Amount is required" });
     }
+
     if (!shippingAddress) {
       return res
         .status(400)
         .json({ success: false, message: "Shipping Address is required" });
     }
+
     if (!paymentMethod) {
       return res
         .status(400)
@@ -81,40 +85,37 @@ export const placeOrderController = async (req, res) => {
         invoiceHtmlTemplate(placedOrder)
       );
 
-      return res
-        .status(201)
-        .json({ success: true, message: "Order Placed Successfully", order, placedOrder });
-    } else {
-      userOrders.orders = userOrders.orders.concat({
-        products,
-        totalItems,
-        totalAmount,
-        shippingAddress,
-        paymentMethod,
-      });
-      await userOrders.save();
-
-      const orders = await orderModel
-        .findOne({ user: _id })
-        .populate("orders.products.product_id");
-
-      const placedOrder = orders?.orders[orders?.orders?.length - 1];
-
-      sendMail(
-        userInfo?.email,
-        subject,
-        text,
-        invoiceHtmlTemplate(placedOrder)
-      );
-
       return res.status(201).json({
         success: true,
         message: "Order Placed Successfully",
-        orders,
+        order,
+        placedOrder,
       });
     }
+
+    userOrders.orders = userOrders.orders.concat({
+      products,
+      totalItems,
+      totalAmount,
+      shippingAddress,
+      paymentMethod,
+    });
+    await userOrders.save();
+
+    const orders = await orderModel
+      .findOne({ user: _id })
+      .populate("orders.products.product_id");
+
+    const placedOrder = orders?.orders[orders?.orders?.length - 1];
+
+    sendMail(userInfo?.email, subject, text, invoiceHtmlTemplate(placedOrder));
+
+    return res.status(201).json({
+      success: true,
+      message: "Order Placed Successfully",
+      orders,
+    });
   } catch (error) {
-    console.error("Something went wrong while placing an order", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while placing an order",
@@ -131,20 +132,20 @@ export const getUserOrdersController = async (req, res) => {
     const orders = await orderModel
       .findOne({ user: _id })
       .populate("orders.products.product_id");
+
     //Check For User
     if (!orders) {
       return res
         .status(404)
         .json({ success: false, message: "Orders Not Found" });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "Orders Fetched Successfully",
-        orders,
-      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Orders Fetched Successfully",
+      orders,
+    });
   } catch (error) {
-    console.error("Something went wrong while fetching user orders", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while fetching user orders",
@@ -174,6 +175,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
     const skip = (pageNum - 1) * limit;
     const orderIdAsObjectId = new Types.ObjectId(order_id);
 
+    //matchQueryObject
     let matchQueryObject = {};
 
     if (order_status) {
@@ -192,8 +194,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
       matchQueryObject["orders.paymentMethod"] = payment_method;
     }
 
-    console.log(matchQueryObject);
-
+    //sortQueryObject
     let sortQueryObject = { "order.createdAt": -1 };
 
     if (createdAt) {
@@ -208,8 +209,6 @@ export const getAllFilteredOrdersController = async (req, res) => {
     if (item) {
       sortQueryObject = { "order.totalItems": +item };
     }
-
-    console.log(sortQueryObject);
 
     const ordersPipeline = [
       { $unwind: "$orders" },
@@ -407,14 +406,14 @@ export const getAllFilteredOrdersController = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "Orders Not Found" });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "All Orders Fetched Successfully",
-        ordersCount,
-        orders,
-      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "All Orders Fetched Successfully",
+      ordersCount,
+      orders,
+    });
   } catch (error) {
     if (error.name === "BSONError") {
       return res.status(400).json({
@@ -423,7 +422,7 @@ export const getAllFilteredOrdersController = async (req, res) => {
         error: error.message,
       });
     }
-    console.error("Something went wrong while fetching all orders", error);
+
     res.status(500).json({
       success: false,
       message: "Something went wrong while fetching all orders",
@@ -439,36 +438,37 @@ export const cancelOrderController = async (req, res) => {
     const { _id } = req.user;
 
     const user = await orderModel.findOne({ user: _id });
+
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User Orders Not Found" });
-    } else {
-      const orderIndex = user.orders.findIndex(
-        (order) => order._id.toString() === orderId
-      );
-      if (orderIndex === -1) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Order Not Found" });
-      } else {
-        //Directly mutating the data since in this case it is most simple way to do it
-        user.orders[orderIndex].status = "cancelled";
-        await user.save();
-
-        const orders = await orderModel
-          .findOne({ user: _id })
-          .populate("orders.products.product_id");
-
-        return res.status(200).json({
-          success: true,
-          message: "Order Cancelled Successfully",
-          orders,
-        });
-      }
     }
+
+    const orderIndex = user.orders.findIndex(
+      (order) => order._id.toString() === orderId
+    );
+
+    if (orderIndex === -1) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Order Not Found" });
+    }
+
+    //Directly mutating the data since in this case it is most simple way to do it
+    user.orders[orderIndex].status = "cancelled";
+    await user.save();
+
+    const orders = await orderModel
+      .findOne({ user: _id })
+      .populate("orders.products.product_id");
+
+    return res.status(200).json({
+      success: true,
+      message: "Order Cancelled Successfully",
+      orders,
+    });
   } catch (error) {
-    console.error("Something went wrong while cancelling the order", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while cancelling the order",
@@ -573,19 +573,19 @@ export const getOrderByIdController = async (req, res) => {
     ];
 
     const order = await orderModel.aggregate(pipeline);
+
     if (!order) {
       return res
         .status(404)
         .json({ success: false, message: "Order Not Found" });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "Order Fetched Successfully",
-        order,
-      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Order Fetched Successfully",
+      order,
+    });
   } catch (error) {
-    console.error("Something went wrong while fetching the order", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while fetching the order",
@@ -728,7 +728,6 @@ export const updateOrderStatusController = async (req, res) => {
       updatedOrder,
     });
   } catch (error) {
-    console.error("Something went wrong while updating order status", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while updating order status",
@@ -871,7 +870,6 @@ export const updatePaymentStatusController = async (req, res) => {
       updatedOrder,
     });
   } catch (error) {
-    console.error("Something went wrong while updating Payment status", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while updating Payment status",

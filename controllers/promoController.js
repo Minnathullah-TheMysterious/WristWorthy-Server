@@ -3,27 +3,26 @@ import { promises as fsPromises } from "fs";
 
 /**********************Create Promo || POST***************** */
 export const createPromoController = async (req, res) => {
-  console.log(req.files)
-  console.log(req.body)
-
-  const { image_1, image_2, image_3, image_4, image_5, image_6, image_7 } =
-    req.files;
-
-  const { brand, category, promo_heading } = req.body;
-
   try {
+    const { image_1, image_2, image_3, image_4, image_5, image_6, image_7 } =
+      req.files;
+
+    const { brand, category, promo_heading } = req.body;
+
     //validation
     if (!promo_heading) {
       return res
         .status(400)
         .json({ success: false, message: "Promo Heading Is Required" });
     }
+
     if (!category && !brand) {
       return res.status(400).json({
         success: false,
         message: "One of brand & category Is Required",
       });
     }
+
     if (!image_1) {
       return res.status(400).json({
         success: false,
@@ -31,6 +30,7 @@ export const createPromoController = async (req, res) => {
           "image_1 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_2) {
       return res.status(400).json({
         success: false,
@@ -38,6 +38,7 @@ export const createPromoController = async (req, res) => {
           "image_2 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_3) {
       return res.status(400).json({
         success: false,
@@ -45,6 +46,7 @@ export const createPromoController = async (req, res) => {
           "image_3 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_4) {
       return res.status(400).json({
         success: false,
@@ -52,6 +54,7 @@ export const createPromoController = async (req, res) => {
           "image_4 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_5) {
       return res.status(400).json({
         success: false,
@@ -59,6 +62,7 @@ export const createPromoController = async (req, res) => {
           "image_5 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_6) {
       return res.status(400).json({
         success: false,
@@ -66,6 +70,7 @@ export const createPromoController = async (req, res) => {
           "image_6 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_7) {
       return res.status(400).json({
         success: false,
@@ -168,17 +173,16 @@ export const createPromoController = async (req, res) => {
       message: "Something Went Wrong while Creating the Promo",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong while Creating the Promo".bgRed.white,
-      error
-    );
   }
 };
 
 /**********************Fetch Promo || GET***************** */
 export const getPromoController = async (req, res) => {
   try {
-    const promo = await promoModel.find().populate('category').populate('brand');
+    const promo = await promoModel
+      .find()
+      .populate("category")
+      .populate("brand");
 
     if (!promo || !promo.length) {
       return res
@@ -195,11 +199,6 @@ export const getPromoController = async (req, res) => {
       message: "Something Went Wrong while fetching the Promo",
       error: error.message,
     });
-
-    console.error(
-      "Something Went Wrong while fetching the Promo".bgRed.white,
-      error
-    );
   }
 };
 
@@ -235,45 +234,40 @@ export const updatePromoImageController = async (req, res) => {
       contentType: image?.mimetype,
       originalname: image?.originalname,
       size: image?.size,
-    }
+    };
 
     const savePromo = await promo[0].save();
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Promo Image Updated Successfully",
-        promo: savePromo,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Promo Image Updated Successfully",
+      promo: savePromo,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while updating the Promo image",
       error: error.message,
     });
-
-    console.error(
-      "Something Went Wrong while updating the Promo image".bgRed.white,
-      error
-    );
   }
 };
 
 /**********************Update Promo || PUT***************** */
 export const updatePromoController = async (req, res) => {
   try {
-    const {category, brand, promo_heading} = req.body
+    const { category, brand, promo_heading } = req.body;
 
     if (!promo_heading) {
       return res
         .status(400)
         .json({ success: false, message: "Promo heading is Required" });
     }
+    
     if (!category && !brand) {
-      return res
-        .status(400)
-        .json({ success: false, message: "One of category & brand is Required" });
+      return res.status(400).json({
+        success: false,
+        message: "One of category & brand is Required",
+      });
     }
 
     const promo = await promoModel.find();
@@ -283,30 +277,23 @@ export const updatePromoController = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Promo Not Found" });
     }
-    
-    promo[0].category = category
-    promo[0].brand = brand
-    promo[0].promo_heading = promo_heading
+
+    promo[0].category = category;
+    promo[0].brand = brand;
+    promo[0].promo_heading = promo_heading;
 
     const savePromo = await promo[0].save();
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Promo Updated Successfully",
-        promo: savePromo,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Promo Updated Successfully",
+      promo: savePromo,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while updating the Promo",
       error: error.message,
     });
-
-    console.error(
-      "Something Went Wrong while updating the Promo".bgRed.white,
-      error
-    );
   }
 };

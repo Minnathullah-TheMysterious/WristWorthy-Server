@@ -53,10 +53,6 @@ export const createBrandController = async (req, res) => {
       message: "Something Went Wrong While Creating The Brand",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong While Creating The Brand".bgRed.white,
-      error
-    );
   }
 };
 
@@ -65,6 +61,7 @@ export const updateBrandImageController = async (req, res) => {
   try {
     const image = req.file;
     const { brandId } = req.params;
+
     //validation
     if (!image) {
       return res
@@ -73,44 +70,44 @@ export const updateBrandImageController = async (req, res) => {
     }
 
     const brand = await brandModel.findById(brandId);
+
     if (!brand) {
       return res.status(404).json({
         success: false,
         message: "Brand Not Found",
       });
-    } else {
-      try {
-        await fsPromises.access(
-          brand.image.location,
-          fsConstants.F_OK | fsConstants.R_OK
-        );
-        await fsPromises.unlink(brand.image.location);
-      } catch (error) {
-        console.error("File Not Found");
-      }
-      brand.image = {
-        location: image?.path,
-        contentType: image?.mimetype,
-        originalname: image?.originalname,
-        size: image?.size,
-      };
-      const updatedBrand = await brand.save();
-      return res.status(200).json({
-        success: true,
-        message: "Brand Imaged Updated Successfully",
-        brand: updatedBrand,
-      });
     }
+
+    try {
+      await fsPromises.access(
+        brand.image.location,
+        fsConstants.F_OK | fsConstants.R_OK
+      );
+      await fsPromises.unlink(brand.image.location);
+    } catch (error) {
+      console.error("File Not Found");
+    }
+
+    brand.image = {
+      location: image?.path,
+      contentType: image?.mimetype,
+      originalname: image?.originalname,
+      size: image?.size,
+    };
+
+    const updatedBrand = await brand.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Brand Imaged Updated Successfully",
+      brand: updatedBrand,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Updating The Brand Image",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong While Updating The Brand Image".bgRed.white,
-      error
-    );
   }
 };
 
@@ -119,6 +116,7 @@ export const updateBrandController = async (req, res) => {
   try {
     const { brand_name } = req.body;
     const { brandId } = req.params;
+
     //validation
     if (!brand_name) {
       return res
@@ -127,32 +125,31 @@ export const updateBrandController = async (req, res) => {
     }
 
     const brand = await brandModel.findById(brandId);
+
     if (!brand) {
       return res.status(404).json({
         success: false,
         message: "Brand Not Found",
       });
-    } else {
-      const slug = slugify(brand_name);
-      brand.brand_name = brand_name;
-      brand.slug = slug;
-      const updatedBrand = await brand.save();
-      return res.status(200).json({
-        success: true,
-        message: "Brand Updated Successfully",
-        brand: updatedBrand,
-      });
     }
+
+    const slug = slugify(brand_name);
+    brand.brand_name = brand_name;
+    brand.slug = slug;
+
+    const updatedBrand = await brand.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Brand Updated Successfully",
+      brand: updatedBrand,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Updating The Brand",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong While Updating The Brand".bgRed.white,
-      error
-    );
   }
 };
 
@@ -161,27 +158,25 @@ export const deleteBranController = async (req, res) => {
   try {
     const { brandId } = req.params;
     const brand = await brandModel.findById(brandId);
+
     if (!brand) {
       return res
         .status(404)
         .json({ success: false, message: "Brand Not Found" });
-    } else {
-      brand.deleted = true;
-      await brand.save();
-      return res
-        .status(200)
-        .json({ success: true, message: "Brand Deleted Successfully" });
     }
+
+    brand.deleted = true;
+    await brand.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Brand Deleted Successfully" });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Deleting The Brand",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong While Deleting The Brand".bgRed.white,
-      error
-    );
   }
 };
 
@@ -190,34 +185,32 @@ export const restoreBrandsController = async (req, res) => {
   try {
     const { brandId } = req.params;
     const brand = await brandModel.findById(brandId);
+
     if (!brand) {
       return res
         .status(404)
         .json({ success: false, message: "Brand Not Found" });
-    } else {
-      brand.deleted = false;
-      await brand.save();
-      return res
-        .status(200)
-        .json({ success: true, message: "Brand Restored Successfully" });
     }
+
+    brand.deleted = false;
+    await brand.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Brand Restored Successfully" });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While restoring The Brand",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong While restoring The Brand".bgRed.white,
-      error
-    );
   }
 };
 
 /**************Get All Brands || GET********** */
 export const getAllBrandsController = async (req, res) => {
   try {
-    const brands = await brandModel.find().sort({createdAt:-1});
+    const brands = await brandModel.find().sort({ createdAt: -1 });
 
     res.status(200).json({
       success: true,
@@ -230,6 +223,5 @@ export const getAllBrandsController = async (req, res) => {
       message: "Something Went Wrong while fetching all the brans".bgRed.white,
       error: error.message,
     });
-    console.error(error);
   }
 };

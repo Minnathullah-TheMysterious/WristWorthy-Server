@@ -61,12 +61,10 @@ app.post(
     switch (event.type) {
       case "payment_intent.amount_capturable_updated":
         const paymentIntentAmountCapturableUpdated = event.data.object;
-        console.log(paymentIntentAmountCapturableUpdated);
         break;
 
       case "payment_intent.canceled":
         const paymentIntentCanceled = event.data.object;
-        console.log(paymentIntentCanceled);
 
         const paymentCanceled = await orderModel.findOneAndUpdate(
           { "orders._id": paymentIntentCanceled?.metadata?.order_id },
@@ -85,12 +83,10 @@ app.post(
 
       case "payment_intent.created":
         const paymentIntentCreated = event.data.object;
-        console.log(paymentIntentCreated);
         break;
 
       case "payment_intent.partially_funded":
         const paymentIntentPartiallyFunded = event.data.object;
-        console.log(paymentIntentPartiallyFunded);
 
         const paymentPartially_funded = await orderModel.findOneAndUpdate(
           { "orders._id": paymentIntentPaymentFailed?.metadata?.order_id },
@@ -109,7 +105,6 @@ app.post(
 
       case "payment_intent.payment_failed":
         const paymentIntentPaymentFailed = event.data.object;
-        console.log(paymentIntentPaymentFailed);
 
         const paymentFailed = await orderModel.findOneAndUpdate(
           { "orders._id": paymentIntentPaymentFailed?.metadata?.order_id },
@@ -128,7 +123,6 @@ app.post(
 
       case "payment_intent.processing":
         const paymentIntentProcessing = event.data.object;
-        console.log(paymentIntentProcessing);
 
         const paymentProcessing = await orderModel.findOneAndUpdate(
           { "orders._id": paymentIntentSucceeded?.metadata?.order_id },
@@ -147,12 +141,10 @@ app.post(
 
       case "payment_intent.requires_action":
         const paymentIntentRequiresAction = event.data.object;
-        console.log(paymentIntentRequiresAction);
         break;
 
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
-        console.log(paymentIntentSucceeded);
 
         const paymentSuccess = await orderModel.findOneAndUpdate(
           { "orders._id": paymentIntentSucceeded?.metadata?.order_id },
@@ -170,7 +162,7 @@ app.post(
         }
 
       default:
-        console.log(`Unhandled event type ${event.type}`);
+        break;
     }
 
     // Return a 200 response to acknowledge receipt of the event
@@ -186,16 +178,12 @@ opts.secretOrKey = process.env.JWT_SECRET_KEY;
 const port = process.env.PORT || 6000;
 
 const __filename = fileURLToPath(import.meta.url);
-console.log(__filename);
 
 const __dirname = dirname(__filename);
-console.log(__dirname);
 
 const rootDir = join(__dirname);
-console.log(rootDir);
 
 const buildDir = join(__dirname, "build");
-console.log(buildDir);
 
 // Middlewares
 app.use(static_(rootDir));
@@ -256,7 +244,6 @@ passport.use(
   new JwtStrategy(opts, async function (jwt_payload, done) {
     try {
       const user = await userModel.findOne({ _id: jwt_payload._id });
-      console.log("user", user);
       if (user) {
         return done(null, sanitizeUser(user)); //calls serializer
       } else {
@@ -323,10 +310,11 @@ app.get("*", (req, res) => {
 //Connecting to Database
 dbConnect().then(() => {
   try {
-    app.listen(port, () => {
-      console.log(`App Listening On Port ${port}`.bgMagenta.white);
-    });
+    app.listen(port);
   } catch (error) {
-    console.log(`Something Went Wrong in Listening the app`.bgRed.white, error);
+    console.error(
+      `Something Went Wrong in Listening the app: `.bgRed.white,
+      error.message
+    );
   }
 });

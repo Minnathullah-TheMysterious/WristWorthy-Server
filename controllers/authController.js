@@ -114,7 +114,6 @@ export const registerController = async (req, res) => {
       message: "Something Went Wrong While Registering",
       error: error.message,
     });
-    console.error("Something Went Wrong While Registering".bgRed.white, error);
   }
 };
 
@@ -158,15 +157,13 @@ export const reqResetPasswordController = async (req, res) => {
 
   try {
     const { phone } = req.body;
-    console.log("User Validation start for password reset");
+
     //Validation
     if (!phone) {
       return res
         .status(400)
         .json({ success: false, message: "Phone number is required" });
     }
-
-    console.log(`User Validation Done`);
 
     //Checking for user with the given phone number
     const user = await userModel.findOne({ phone });
@@ -175,53 +172,43 @@ export const reqResetPasswordController = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
-    } else {
-      console.log(`User Found`);
-
-      // Generate OTP using the secret for the user
-      const token = speakeasy.totp({
-        secret: user.otpSecret,
-        encoding: "base32",
-      });
-
-      console.log(`OTP Generated`);
-
-      // Create a Twilio client instance
-      const twilioClient = twilio(accountSid, authToken);
-
-      console.log(`Twilio Account Created`);
-
-      // Send OTP via SMS
-      await twilioClient.messages
-        .create({
-          body: `Your OTP for password reset: ${token}`,
-          from: twilioPhoneNumber,
-          to: user.phone,
-        })
-        .then(() => {
-          console.log(`OTP sent to client Successfully`);
-          res.status(200).json({
-            success: true,
-            message: "OTP sent successfully",
-            user_id: user?._id,
-          });
-        })
-        .catch((error) => {
-          console.error("Error sending OTP:".bgRed.white, error);
-          return res
-            .status(500)
-            .json({ success: false, message: "Failed To Send OTP", error });
-        });
     }
+
+    // Generate OTP using the secret for the user
+    const token = speakeasy.totp({
+      secret: user.otpSecret,
+      encoding: "base32",
+    });
+
+    // Create a Twilio client instance
+    const twilioClient = twilio(accountSid, authToken);
+
+    // Send OTP via SMS
+    await twilioClient.messages
+      .create({
+        body: `Your OTP for password reset: ${token}`,
+        from: twilioPhoneNumber,
+        to: user.phone,
+      })
+      .then(() => {
+        res.status(200).json({
+          success: true,
+          message: "OTP sent successfully",
+          user_id: user?._id,
+        });
+      })
+      .catch((error) => {
+        return res.status(500).json({
+          success: false,
+          message: "Failed To Send OTP",
+          error: error.message,
+        });
+      });
   } catch (error) {
-    console.error(
-      "Something Went Wrong in passwordResetController".bgRed.white,
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong in Resetting the Password",
-      error,
+      error: error.message,
     });
   }
 };
@@ -230,8 +217,7 @@ export const reqResetPasswordController = async (req, res) => {
 export const reqResetPasswordMailController = async (req, res) => {
   try {
     const { email, resetPasswordLink } = req.body;
-    console.log(email);
-    console.log(resetPasswordLink);
+
     //Validation
     if (!email) {
       return res
@@ -246,39 +232,35 @@ export const reqResetPasswordMailController = async (req, res) => {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
-    } else {
-      const { token, success } = await generateToken();
-      console.log(token);
-      if (!success) {
-        return res
-          .status(500)
-          .json({ success: false, message: "Failed to generate token" });
-      } else {
-        user.token = token;
-        await user.save();
-
-        const subject =
-          "Reset Password For Your WristWorthy E-commerce Account ✔";
-        const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
-        const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}/${token}>HERE</a> To Reset Password</b></div>`;
-        const response = await sendMail(email, subject, text, html);
-        if (!response.accepted.length) {
-          return res
-            .status(500)
-            .json({ success: false, message: "Failed To Send Mail" });
-        } else {
-          res.status(200).json({
-            success: true,
-            message: "Mail Sent Successfully",
-          });
-        }
-      }
     }
+
+    const { token, success } = await generateToken();
+
+    if (!success) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to generate token" });
+    }
+
+    user.token = token;
+    await user.save();
+
+    const subject = "Reset Password For Your WristWorthy E-commerce Account ✔";
+    const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
+    const html = `<div><b>HI! ${user?.user_name}, Hope Your Are Doing Great.</b> </br> <b>Click <a href=${resetPasswordLink}/${token}>HERE</a> To Reset Password</b></div>`;
+    const response = await sendMail(email, subject, text, html);
+
+    if (!response.accepted.length) {
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed To Send Mail" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Mail Sent Successfully",
+    });
   } catch (error) {
-    console.error(
-      "Something Went Wrong in passwordResetController".bgRed.white,
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong in Resetting the Password",
@@ -302,33 +284,31 @@ export const verifyOtpController = async (req, res) => {
     }
 
     const user = await userModel.findOne({ _id: userId });
+
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User not found" });
-    } else {
-      // Verify OTP using the secret for the user
-      const isValidOTP = speakeasy.totp.verify({
-        secret: user.otpSecret,
-        encoding: "base32",
-        token: otp,
-        window: 1,
-      });
-      if (!isValidOTP) {
-        return res.status(401).json({ success: false, message: "Invalid OTP" });
-      } else {
-        return res.status(200).json({ success: true, message: "OTP Verified" });
-      }
     }
+
+    // Verify OTP using the secret for the user
+    const isValidOTP = speakeasy.totp.verify({
+      secret: user.otpSecret,
+      encoding: "base32",
+      token: otp,
+      window: 1,
+    });
+
+    if (!isValidOTP) {
+      return res.status(401).json({ success: false, message: "Invalid OTP" });
+    }
+
+    return res.status(200).json({ success: true, message: "OTP Verified" });
   } catch (error) {
-    console.error(
-      "Something Went Wrong in verifyOtpController".bgRed.white,
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While verifying the OTP",
-      error,
+      error: error.message,
     });
   }
 };
@@ -337,14 +317,7 @@ export const verifyOtpController = async (req, res) => {
 export const resetPasswordController = async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log("User Id:", userId);
     const { newPassword, confirmNewPassword } = req.body;
-    console.log(
-      "Password:",
-      newPassword,
-      "\n confirm password:",
-      confirmNewPassword
-    );
 
     //Validation
     switch (true) {
@@ -362,37 +335,37 @@ export const resetPasswordController = async (req, res) => {
     }
 
     const user = await userModel.findById(userId);
+
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User Not Found" });
-    } else {
-      if (newPassword !== confirmNewPassword) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Passwords Does Not Match" });
-      } else {
-        console.log("Entered Into Hashing and password reset section");
-        const hashedPassword = await hashPassword(newPassword);
-        console.log("Password Hashed Successfully", hashedPassword);
-        const updatedUser = await userModel.findByIdAndUpdate(
-          { _id: userId },
-          { $set: { password: hashedPassword } }
-        );
-        console.log("Updated User:", updatedUser);
-        res.status(200).json({
-          success: true,
-          message: "Password Reset Successful",
-          updatedUser,
-        });
-      }
     }
+
+    if (newPassword !== confirmNewPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords Does Not Match" });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      { _id: userId },
+      { $set: { password: hashedPassword } }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Password Reset Successful",
+      updatedUser,
+    });
   } catch (error) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Something Went Wrong in Resetting The Password",
+      error: error.message,
     });
-    console.error("Something Went Wrong in resetPasswordController", error);
   }
 };
 
@@ -400,7 +373,6 @@ export const resetPasswordController = async (req, res) => {
 export const resetPasswordMailController = async (req, res) => {
   try {
     const { email, newPassword, confirmNewPassword, token } = req.body;
-    console.log(email, token);
 
     //Validation
     switch (true) {
@@ -418,50 +390,50 @@ export const resetPasswordMailController = async (req, res) => {
     }
 
     const user = await userModel.findOne({ email, token });
+
     if (!user) {
       return res
         .status(301)
         .json({ success: false, message: "Link Has Been Expired" });
-    } else {
-      if (newPassword !== confirmNewPassword) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Passwords Does Not Match" });
-      } else {
-        console.log("Entered Into Hashing and password reset section");
-        const hashedPassword = await hashPassword(newPassword);
-        console.log("Password Hashed Successfully", hashedPassword);
-        const updatedUser = await userModel.findOneAndUpdate(
-          { email },
-          { $set: { password: hashedPassword } }
-        );
-
-        //Send the mail to user after successful password reset
-        const subject =
-          "Password has been successfully reset For Your WristWorthy E-commerce Account ✔";
-        const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
-        const html = `<b>HI! ${user?.user_name}, Hope Your Are Doing Great. Your Password has been Reset Successfully</b>`;
-        await sendMail(email, subject, text, html);
-
-        //Reset The Token immediately after user resets the password
-        const { success, token } = await generateToken();
-        if (success) {
-          user.token = token;
-          await user.save();
-        }
-        console.log("Updated User:", updatedUser);
-        res.status(200).json({
-          success: true,
-          message: "Password Reset Successful",
-          updatedUser,
-        });
-      }
     }
+
+    if (newPassword !== confirmNewPassword) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Passwords Does Not Match" });
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    const updatedUser = await userModel.findOneAndUpdate(
+      { email },
+      { $set: { password: hashedPassword } }
+    );
+
+    //Send the mail to user after successful password reset
+    const subject =
+      "Password has been successfully reset For Your WristWorthy E-commerce Account ✔";
+    const text = `HI! ${user?.user_name}, Hope Your Are Doing Great`;
+    const html = `<b>HI! ${user?.user_name}, Hope Your Are Doing Great. Your Password has been Reset Successfully</b>`;
+    await sendMail(email, subject, text, html);
+
+    //Reset The Token immediately after user resets the password
+    const response = await generateToken();
+    
+    if (response.success) {
+      user.token = response.token;
+      await user.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Password Reset Successful",
+      updatedUser,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong during Password Reset",
+      error: error.message,
     });
-    console.error("Something Went Wrong in resetPasswordController", error);
   }
 };

@@ -4,17 +4,25 @@ import userModel from "../models/userModel.js";
 export const getUserDataController = async (req, res) => {
   try {
     const { _id } = req.user;
+
     const user = await userModel.findById(_id);
-    res.status(200).json({
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User Not Found" });
+    }
+
+    return res.status(200).json({
       success: true,
       message: "User Data Fetched Successfully",
       user,
     });
   } catch (error) {
-    console.error("Something Went Wrong in getting the user data", error);
     res.status(500).json({
       success: false,
       message: "Something Went Wrong in getting the user data",
+      error: error.message,
     });
   }
 };
@@ -106,42 +114,43 @@ export const addUserAddressController = async (req, res) => {
     }
 
     const user = await userModel.findById(_id);
+
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User Not Found" });
-    } else {
-      const newAddress = {
-        firstName,
-        lastName,
-        emailAddress,
-        mobileNumber,
-        altMobileNumber,
-        country,
-        state,
-        city,
-        dist,
-        mandal,
-        village,
-        pinCode,
-        street,
-      };
-
-      const updateUserAddress = [...user.addresses, newAddress];
-      user.addresses = updateUserAddress;
-      await user.save();
-      res.status(200).json({
-        success: true,
-        message: "User Address Added Successfully",
-        user,
-      });
     }
+
+    const newAddress = {
+      firstName,
+      lastName,
+      emailAddress,
+      mobileNumber,
+      altMobileNumber,
+      country,
+      state,
+      city,
+      dist,
+      mandal,
+      village,
+      pinCode,
+      street,
+    };
+
+    const updateUserAddress = [...user.addresses, newAddress];
+    user.addresses = updateUserAddress;
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User Address Added Successfully",
+      user,
+    });
   } catch (error) {
-    console.error("Something went wrong in updateUserAddressController");
     res.status(500).json({
       success: true,
-      message: "Something went wrong in updateUserAddressController",
-      error,
+      message: "Something went wrong while updating user address",
+      error: error.message,
     });
   }
 };
@@ -150,18 +159,23 @@ export const addUserAddressController = async (req, res) => {
 export const getUserAddressesController = async (req, res) => {
   try {
     const { _id } = req.user;
-    const response = await userModel.findById(_id);
+
+    const user = await userModel.findById(_id);
+
+    if (!user) {
+      return res.status(404).json({ success: true, message: "User not found" });
+    }
+
     return res.status(200).json({
       success: true,
       message: "User Addresses Fetched Successfully",
-      addresses: response?.addresses,
+      addresses: user?.addresses,
     });
   } catch (error) {
-    console.error("Something Went Wrong While Fetching the data");
     res.status(500).json({
       success: false,
-      message: "Something Went Wrong While Fetching the data",
-      error,
+      message: "Something Went Wrong While Fetching User Addresses",
+      error: error.message,
     });
   }
 };
@@ -298,57 +312,56 @@ export const updateUserAddressController = async (req, res) => {
     }
 
     const user = await userModel.findById(_id);
+
     if (!user) {
       return res
         .status(404)
         .json({ success: false, message: "User Not Found" });
-    } else {
-      const updatedAddress = {
-        firstName,
-        lastName,
-        emailAddress,
-        mobileNumber,
-        altMobileNumber,
-        country,
-        state,
-        city,
-        dist,
-        mandal,
-        village,
-        pinCode,
-        street,
-        _id: addressId,
-      };
-
-      const addressesCopy = [...user.addresses];
-
-      const updateAddressIndex = addressesCopy.findIndex(
-        (address) => address._id.toString() === addressId
-      );
-
-      if (updateAddressIndex === -1) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Address To Be Updated Not Found" });
-      } else {
-        addressesCopy.splice(updateAddressIndex, 1, updatedAddress);
-        user.addresses = addressesCopy;
-        const updatedUser = await user.save();
-        return res.status(200).json({
-          success: true,
-          message: "Address Updated Successfully",
-          updatedUser,
-        });
-      }
     }
+
+    const updatedAddress = {
+      firstName,
+      lastName,
+      emailAddress,
+      mobileNumber,
+      altMobileNumber,
+      country,
+      state,
+      city,
+      dist,
+      mandal,
+      village,
+      pinCode,
+      street,
+      _id: addressId,
+    };
+
+    const addressesCopy = [...user.addresses];
+
+    const updateAddressIndex = addressesCopy.findIndex(
+      (address) => address._id.toString() === addressId
+    );
+
+    if (updateAddressIndex === -1) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Address To Be Updated Not Found" });
+    }
+
+    addressesCopy.splice(updateAddressIndex, 1, updatedAddress);
+    user.addresses = addressesCopy;
+    const updatedUser = await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Address Updated Successfully",
+      updatedUser,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while updating the User Address",
+      error: error.message,
     });
-    console.error(
-      "Something Went Wrong in the updateUserAddressController",
-      error
-    );
   }
 };

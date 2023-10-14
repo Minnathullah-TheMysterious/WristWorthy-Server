@@ -9,18 +9,16 @@ export const isAuth = (req, res, next) => {
 export const isAdmin = async (req, res, next) => {
   try {
     const { role } = req.user;
+
     if (role !== "admin") {
-      console.error("Unauthorized Access, Ony Admin Can Access".bgRed.white);
-      return res
-        .status(401)
-        .json({
-          success: false,
-          message: "Unauthorized Access, Only Admin Can Access",
-        });
-    } else {
-      res.status(200)
-      next();
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized Access, Only Admin Can Access",
+      });
     }
+    
+    res.status(200);
+    next();
   } catch (error) {
     res.status(500).json({
       succuss: false,

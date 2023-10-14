@@ -10,7 +10,7 @@ export const hashPassword = async (plainTextPassword) => {
     const hashedPassword = await hash(plainTextPassword, saltRounds);
     return hashedPassword;
   } catch (error) {
-    console.error(error.message.bgRed.white, error);
+    return error.message;
   }
 };
 
@@ -20,7 +20,7 @@ export const comparePassword = async (plainTextPassword, hashedPassword) => {
     const result = await compare(plainTextPassword, hashedPassword);
     return result;
   } catch (error) {
-    console.error("Error in comparePassword function", error);
+    return error.message;
   }
 };
 
@@ -55,7 +55,6 @@ export const transporter = nodemailer.createTransport({
 });
 
 export const sendMail = async (to, subject, text, html) => {
-  console.log(html);
   // send mail with defined transport object
   const info = await transporter.sendMail({
     from: '"WristWorthy E-commerce" <minnathullahmohammed@gmail.ocm>',

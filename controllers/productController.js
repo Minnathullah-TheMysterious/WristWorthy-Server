@@ -5,69 +5,77 @@ import { promises as fsPromises, constants as fsConstants } from "fs";
 
 /****************Create Product || POST**************** */
 export const createProductController = async (req, res) => {
-  const { thumbnail, image_1, image_2, image_3, image_4 } = req.files;
-  console.log(req.files);
-  const {
-    product_name,
-    description,
-    highlight_1,
-    highlight_2,
-    highlight_3,
-    highlight_4,
-    highlight_5,
-    price,
-    discountPercentage,
-    stock,
-    rating,
-  } = req.body;
-
-  let { brand, category } = req.body;
-
   try {
+    const { thumbnail, image_1, image_2, image_3, image_4 } = req.files;
+
+    const {
+      product_name,
+      description,
+      highlight_1,
+      highlight_2,
+      highlight_3,
+      highlight_4,
+      highlight_5,
+      price,
+      discountPercentage,
+      stock,
+      rating,
+    } = req.body;
+
+    let { brand, category } = req.body;
+
     //validation
     if (!product_name) {
       return res
         .status(400)
         .json({ success: false, message: "Product Name Is Required" });
     }
+
     if (!description) {
       return res
         .status(400)
         .json({ success: false, message: "Product Description Is Required" });
     }
+
     if (!price) {
       return res
         .status(400)
         .json({ success: false, message: "Product Price Is Required" });
     }
+
     if (!category) {
       return res
         .status(400)
         .json({ success: false, message: "Product Category Is Required" });
     }
+
     if (!brand) {
       return res
         .status(400)
         .json({ success: false, message: "Product Brand Is Required" });
     }
+
     if (!thumbnail) {
       return res.status(400).json({
         success: false,
         message: "Product Image For Thumbnail Is Required",
       });
     }
+
     if (!isValidObjectId(brand)) {
       return res.status(400).json({
         success: false,
         message: "Invalid Brand Type",
       });
     }
+
     if (!isValidObjectId(category)) {
       return res.status(400).json({
         success: false,
         message: "Invalid Category Type",
       });
     }
+
     if (!image_1) {
       return res.status(400).json({
         success: false,
@@ -75,6 +83,7 @@ export const createProductController = async (req, res) => {
           "image_1 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_2) {
       return res.status(400).json({
         success: false,
@@ -82,6 +91,7 @@ export const createProductController = async (req, res) => {
           "image_2 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_3) {
       return res.status(400).json({
         success: false,
@@ -89,6 +99,7 @@ export const createProductController = async (req, res) => {
           "image_3 is required. You can repeat the same image for each image",
       });
     }
+
     if (!image_4) {
       return res.status(400).json({
         success: false,
@@ -139,54 +150,50 @@ export const createProductController = async (req, res) => {
         success: false,
         message: "Product With The Same Name Already exists",
       });
-    } else {
-      if (isValidObjectId(brand)) {
-        let brandId = mongoose.Types.ObjectId.createFromHexString(brand);
-        brand = brandId;
-      }
-
-      if (isValidObjectId(category)) {
-        let categoryId = mongoose.Types.ObjectId.createFromHexString(category);
-        category = categoryId;
-      }
-
-      const data = new productModel({
-        product_name,
-        slug: slugify(product_name),
-        brand,
-        category,
-        description,
-        highlights,
-        stock,
-        price,
-        discountPercentage,
-        rating,
-        thumbnail: {
-          location: thumbnail[0]?.path,
-          contentType: thumbnail[0]?.mimetype,
-          originalname: thumbnail[0]?.originalname,
-          size: thumbnail[0]?.size,
-        },
-        images,
-      });
-
-      const product = await data.save();
-      res.status(201).json({
-        success: true,
-        message: "Product Created Successfully",
-        product,
-      });
     }
+
+    if (isValidObjectId(brand)) {
+      let brandId = mongoose.Types.ObjectId.createFromHexString(brand);
+      brand = brandId;
+    }
+
+    if (isValidObjectId(category)) {
+      let categoryId = mongoose.Types.ObjectId.createFromHexString(category);
+      category = categoryId;
+    }
+
+    const data = new productModel({
+      product_name,
+      slug: slugify(product_name),
+      brand,
+      category,
+      description,
+      highlights,
+      stock,
+      price,
+      discountPercentage,
+      rating,
+      thumbnail: {
+        location: thumbnail[0]?.path,
+        contentType: thumbnail[0]?.mimetype,
+        originalname: thumbnail[0]?.originalname,
+        size: thumbnail[0]?.size,
+      },
+      images,
+    });
+
+    const product = await data.save();
+    return res.status(201).json({
+      success: true,
+      message: "Product Created Successfully",
+      product,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while Creating the product",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong while Creating the product".bgRed.white,
-      error
-    );
   }
 };
 
@@ -208,6 +215,7 @@ export const updateProductController = async (req, res) => {
       highlight_4,
       highlight_5,
     } = req.body;
+
     const { productId } = req.params;
 
     const highlights = [
@@ -224,32 +232,38 @@ export const updateProductController = async (req, res) => {
         .status(400)
         .json({ success: false, message: "Product Name Is Required" });
     }
+
     if (!description) {
       return res
         .status(400)
         .json({ success: false, message: "Product Description Is Required" });
     }
+
     if (!price) {
       return res
         .status(400)
         .json({ success: false, message: "Product Price Is Required" });
     }
+
     if (!category) {
       return res
         .status(400)
         .json({ success: false, message: "Product Category Is Required" });
     }
+
     if (!brand) {
       return res
         .status(400)
         .json({ success: false, message: "Product Brand Is Required" });
     }
+
     if (!isValidObjectId(brand)) {
       return res.status(400).json({
         success: false,
         message: "Invalid Brand Type",
       });
     }
+
     if (!isValidObjectId(category)) {
       return res.status(400).json({
         success: false,
@@ -287,10 +301,6 @@ export const updateProductController = async (req, res) => {
       message: "Something Went Wrong while updating the product",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong while updating the product".bgRed.white,
-      error
-    );
   }
 };
 
@@ -308,46 +318,44 @@ export const updateProductThumbnailController = async (req, res) => {
     }
 
     const product = await productModel.findById(productId);
+
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "product not found" });
-    } else {
-      if (product.thumbnail && product.thumbnail.location) {
-        try {
-          await fsPromises.access(
-            product.thumbnail.location,
-            fsConstants.F_OK | fsConstants.R
-          );
-          await fsPromises.unlink(product.thumbnail.location);
-        } catch (fsError) {
-          console.error("File Not Found \n".bgRed.white, fsError.message);
-        }
-      }
-
-      product.thumbnail = {
-        location: thumbnail?.path,
-        contentType: thumbnail?.mimetype,
-        originalname: thumbnail?.originalname,
-        size: thumbnail?.size,
-      };
-      const updatedProduct = await product.save();
-      return res.status(200).json({
-        success: true,
-        message: "Thumbnail Updated Successfully",
-        product: updatedProduct,
-      });
     }
+
+    if (product.thumbnail && product.thumbnail.location) {
+      try {
+        await fsPromises.access(
+          product.thumbnail.location,
+          fsConstants.F_OK | fsConstants.R
+        );
+        await fsPromises.unlink(product.thumbnail.location);
+      } catch (fsError) {
+        console.error("File Not Found \n".bgRed.white, fsError.message);
+      }
+    }
+
+    product.thumbnail = {
+      location: thumbnail?.path,
+      contentType: thumbnail?.mimetype,
+      originalname: thumbnail?.originalname,
+      size: thumbnail?.size,
+    };
+    const updatedProduct = await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Thumbnail Updated Successfully",
+      product: updatedProduct,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while updating the product thumbnail",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong while updating the product thumbnail".bgRed.white,
-      error
-    );
   }
 };
 
@@ -356,7 +364,6 @@ export const updateProductImageController = async (req, res) => {
   try {
     const { productId, imageIndex } = req.params;
     const image = req.file;
-    console.log(image);
 
     //validation
     if (!image) {
@@ -366,50 +373,48 @@ export const updateProductImageController = async (req, res) => {
     }
 
     const product = await productModel.findById(productId);
+
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "product not found" });
-    } else {
-      if (
-        product.images &&
-        product.images[imageIndex] &&
-        product.images[imageIndex].location
-      ) {
-        try {
-          await fsPromises.access(
-            product.images[imageIndex].location,
-            fsConstants.F_OK | fsConstants.R_OK
-          );
-          await fsPromises.unlink(product.images[imageIndex].location);
-        } catch (error) {
-          console.error("File Not Found \n".bgRed.white, error.message);
-        }
-      }
-
-      product.images[imageIndex] = {
-        location: image?.path,
-        contentType: image?.mimetype,
-        originalname: image?.originalname,
-        size: image?.size,
-      };
-      const updatedProduct = await product.save();
-      return res.status(200).json({
-        success: true,
-        message: "Image updated Successfully",
-        product: updatedProduct,
-      });
     }
+
+    if (
+      product.images &&
+      product.images[imageIndex] &&
+      product.images[imageIndex].location
+    ) {
+      try {
+        await fsPromises.access(
+          product.images[imageIndex].location,
+          fsConstants.F_OK | fsConstants.R_OK
+        );
+        await fsPromises.unlink(product.images[imageIndex].location);
+      } catch (error) {
+        console.error("File Not Found \n".bgRed.white, error.message);
+      }
+    }
+
+    product.images[imageIndex] = {
+      location: image?.path,
+      contentType: image?.mimetype,
+      originalname: image?.originalname,
+      size: image?.size,
+    };
+    const updatedProduct = await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Image updated Successfully",
+      product: updatedProduct,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Something Went Wrong while updating the image",
       error: error.message,
     });
-    console.error(
-      "Something Went Wrong while updating the image".bgRed.white,
-      error
-    );
   }
 };
 
@@ -451,13 +456,10 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
     let sortQueryObject = {};
 
     if (_sort && _order && _sort === "price") {
-      //_order should be 1(asc) or -1(desc)
-      console.log(_order);
       sortQueryObject.price = _order;
     }
 
     if (_sort && _order && _sort === "rating") {
-      console.log(_order);
       sortQueryObject.rating = _order; //It will always be in the descending order (sort({rating:-1}))
     }
 
@@ -498,7 +500,6 @@ export const getFilteredAndSortedProductsController = async (req, res) => {
       filteredNonDeletedProducts,
     });
   } catch (error) {
-    console.error("Something Went Wrong While Fetching products", error);
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching products",
@@ -512,22 +513,19 @@ export const getSelectedProductController = async (req, res) => {
   try {
     const { productId } = req.params;
     const selectedProduct = await productModel.findById(productId);
+
     if (!selectedProduct) {
       return res
         .status(404)
         .json({ success: false, message: "Product Not Found" });
-    } else {
-      return res.status(200).json({
-        success: true,
-        message: "Selected Product Fetched Successfully",
-        selectedProduct,
-      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Selected Product Fetched Successfully",
+      selectedProduct,
+    });
   } catch (error) {
-    console.error(
-      "Something Went Wrong While Fetching the selected product",
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching the selected product",
@@ -540,8 +538,6 @@ export const getSelectedProductController = async (req, res) => {
 export const getRelatedProductController = async (req, res) => {
   try {
     const { categoryId, productId } = req.params;
-
-    console.log(categoryId, productId);
 
     const categoryObjectId = new Types.ObjectId(categoryId);
 
@@ -565,10 +561,6 @@ export const getRelatedProductController = async (req, res) => {
       relatedProducts,
     });
   } catch (error) {
-    console.error(
-      "Something Went Wrong While Fetching the Related products",
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While Fetching the Related products",
@@ -583,19 +575,20 @@ export const deleteProductController = async (req, res) => {
     const { productId } = req.params;
 
     let product = await productModel.findById(productId);
+
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    } else {
-      product.deleted = true;
-      await product.save();
-      return res
-        .status(200)
-        .json({ success: true, message: "Product Deleted Successfully" });
     }
+
+    product.deleted = true;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Product Deleted Successfully" });
   } catch (error) {
-    console.error("Something Went Wrong While deleting the product", error);
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While deleting the product",
@@ -610,19 +603,20 @@ export const restoreProductController = async (req, res) => {
     const { productId } = req.params;
 
     let product = await productModel.findById(productId);
+
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    } else {
-      product.deleted = false;
-      await product.save();
-      return res
-        .status(200)
-        .json({ success: true, message: "Product Restored Successfully" });
     }
+
+    product.deleted = false;
+    await product.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Product Restored Successfully" });
   } catch (error) {
-    console.error("Something Went Wrong While restoring the product", error);
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While restoring the product",
@@ -635,28 +629,25 @@ export const restoreProductController = async (req, res) => {
 export const updateProductStockController = async (req, res) => {
   try {
     const { productId, productQuantity } = req.params;
-    console.log(productId, productQuantity);
 
     let product = await productModel.findById(productId);
+
     if (!product) {
       return res
         .status(404)
         .json({ success: false, message: "Product not found" });
-    } else {
-      const stock = product.stock;
-      product.stock = stock - +productQuantity;
-      await product.save();
-      return res.status(200).json({
-        success: true,
-        message: "Product Stock Updated Successfully",
-        product,
-      });
     }
+
+    const stock = product.stock;
+    product.stock = stock - +productQuantity;
+    await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product Stock Updated Successfully",
+      product,
+    });
   } catch (error) {
-    console.error(
-      "Something Went Wrong While updating the product stock",
-      error
-    );
     res.status(500).json({
       success: false,
       message: "Something Went Wrong While updating the product stock",
