@@ -569,6 +569,45 @@ export const getRelatedProductController = async (req, res) => {
   }
 };
 
+/****************Search Product By Name || GET*********** */
+export const SearchProductController = async (req, res) => {
+  try {
+    const { productName } = req.params;
+
+    const products = await productModel.find({
+      product_name: { $regex: productName, $options: "i" },
+    });
+
+    if (!products || !products.length) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No Products Found" });
+    }
+
+    const nonDeletedProducts = products?.filter(
+      (product) => product?.deleted === false
+    );
+
+    const nonDeletedProductsCount = nonDeletedProducts?.length
+    const productsCount = products?.length
+
+    return res.status(200).json({
+      success: true,
+      message: "Product Found",
+      productsCount,
+      nonDeletedProductsCount,
+      products,
+      nonDeletedProducts,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Something Went Wrong While searching for products",
+      error: error.message,
+    });
+  }
+};
+
 /******************Delete Product || DELETE****************** */
 export const deleteProductController = async (req, res) => {
   try {

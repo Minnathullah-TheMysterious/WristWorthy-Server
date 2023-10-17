@@ -1,6 +1,7 @@
 import { Router } from "express";
 import multer from "multer";
 import {
+  SearchProductController,
   createProductController,
   deleteProductController,
   getFilteredAndSortedProductsController,
@@ -79,6 +80,9 @@ router.get("/get-selected-product/:productId", getSelectedProductController);
 
 //Get Related Products By Category & productId
 router.get("/get-related-products/:categoryId/:productId", getRelatedProductController);
+
+//Search Products By name
+router.get("/search-product/:productName", SearchProductController);
 
 //Delete Product
 router.delete(
