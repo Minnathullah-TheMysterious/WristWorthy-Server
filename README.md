@@ -1,39 +1,63 @@
 # WristWorthy
 WristWorthy is a feature-rich eCommerce web application built using Node.js and Express. It offers a seamless shopping experience for users interested in purchasing a variety of wristwatches and other products. This repository contains the source code for the app, showcasing its functionalities and technologies used in development.
 ## Features
-### User Authentication
+**User Authentication:**
+
 Secure user registration and login powered by Passport.js for authentication.
-### Product Listings
+
+**Product Listings:**
+
 Browse through a wide selection of products from different categories, each with detailed descriptions and images.
-### Shopping Cart
+
+**Shopping Cart:**
+
 Add products to your cart and manage your selections before making a purchase.
-### Wishlist
+
+**Wishlist:**
+
 Add your favourite products to your wishlist and manage your selections before making a purchase.
-### Payment Processing
+
+**Payment Processing:**
+
 Utilizes Stripe for secure and convenient payment processing.
-### Order History
+
+**Order History:**
+
 Keep track of your past orders for reference and record-keeping.
-### User Profiles
+
+**User Profiles:**
+
 Users can manage their profiles, view order history, and update personal information.
-### Admin Dashboard
+
+**Admin Dashboard:**
+
 Admins have the authority to create, update, and delete products, brands, and categories. They can also manage and fulfill orders.
 ## Technologies Used
-### Node.js and Express
+**Node.js and Express:**
+
 The server-side of the application is built on Node.js and Express, providing a robust and scalable foundation.
-### Passport.js
+
+**Passport.js:**
+
 The Local Strategy of Passport.js is employed for user authentication, ensuring that user data is kept secure. And JWT Strategy of Passport.js is employed for API authentication.
-### MongoDB
+
+**MongoDB:**
+
 MongoDB is used as the database to store user information, product data, and order history.
-### Stripe
+
+**Stripe:**
+
 Payment processing is handled via Stripe for secure and seamless transactions.
-### Front-end Framework
+
+**Front-end Framework:**
+
 The front-end of the application is built using React.js
 ## Installation and Usage
 Clone the repository `git clone https://github.com/minnathullah-TheMysterious/books-server.git`
 
 Install dependencies using `npm install`.
 
-Configure your MongoDB and Stripe API keys
+Configure your *MongoDB and Stripe API keys*
 
 Run the application using `npm run server`.
 
@@ -41,19 +65,28 @@ Access the app in your web browser at `http://localhost:7070`.
 
 Feel free to explore the code and contribute to the project to make WristWorthy even more 'wristworthy' for watch enthusiasts and other products.
 ## Admin Capabilities
-### Admin Dashboard
+**Admin Dashboard:**
+
 Admins can access a dedicated dashboard for managing products, brands, categories, and orders.
-### Product Management
+
+**Product Management:**
+
 Create, update, and delete products, including details like name, description, price, and images.
-### Brand and Category Management
+
+**Brand and Category Management:**
+
 Admins can add, edit, or remove brands and categories for efficient product organization.
-### Order Management
+
+**Order Management:**
+
 Admins have the ability to view and manage orders, including order status updates and order fulfillment.
 ## API Documentaion
-## Admin APIs
-### Create Product `/api/v1/product/admin/create-product`
-### Request
-FormData
+### Admin APIs
+**Create Product `/api/v1/product/admin/create-product`**
+
+***Request***
+
+FormData:
 ```javascript
 {
   "product_name": "Rolex",
@@ -75,9 +108,9 @@ FormData
   "image_4": upload image
 }
 ```
-### Responses
-HTTP Status Code: 201 CREATED
+***Responses***
 
+*HTTP Status Code: 201 CREATED*
 ```javascript
 {
     "success": true,
@@ -142,17 +175,20 @@ HTTP Status Code: 201 CREATED
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Validation error" }
 ```
-HTTP Status Code: 409 CONFLICT
+*HTTP Status Code: 409 CONFLICT*
 ```javascript
 { success: false, message: "Product With The Same Name Already exists"}
 ```
-### Update Product `/api/v1/product/admin/update-product/{productId}`
-### Request
+**Update Product `/api/v1/product/admin/update-product/{productId}`**
+
+***Request***
+
 Path Parameter:
 
 productId (string, required): The unique identifier for the product.
@@ -174,9 +210,9 @@ Request Body:
      "highlight_5": "Provide product feature",
 }
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
       success: true,
@@ -201,13 +237,16 @@ HTTP Status Code: 200 OK
 }
 
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Validation error" }
 ```
-### Update Product Thumbnail `/api/v1/product/admin/update-product-thumbnail/{productId}`
-### Request
+**Update Product Thumbnail `/api/v1/product/admin/update-product-thumbnail/{productId}`**
+
+***Request***
+
 Path Parameter:
 
 productId (string, required): The unique identifier for the product.
@@ -216,9 +255,9 @@ FormData:
 ```javascript
 {"thumbnail": upload image}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -284,17 +323,20 @@ HTTP Status Code: 200 OK
 }
 
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Product thumbnail is required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "product not found" }
 ```
-### Update Product Image `/api/v1/product/admin/update-product-image/{productId}/{imageIndex}`
-### Request
+**Update Product Image `/api/v1/product/admin/update-product-image/{productId}/{imageIndex}`**
+
+***Request***
+
 Path Parameter:
 
 productId (string, required): The unique identifier for the product.
@@ -305,9 +347,9 @@ FormData:
 ```javascript
 {"image": upload image}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -373,63 +415,73 @@ HTTP Status Code: 200 OK
 }
 
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Product image is required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "product not found" }
 ```
-### Delete Product `/api/v1/product/admin/delete-product/{productId}`
-### Request
+**Delete Product `/api/v1/product/admin/delete-product/{productId}`**
+
+***Request***
+
 Path Parameter:
 
 productId (string, required): The unique identifier for the product.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Product Deleted Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "product not found" }
 ```
-### Restore Product `/api/v1/product/admin/restore-product/{productId}`
-### Request
+**Restore Product `/api/v1/product/admin/restore-product/{productId}`**
+
+***Request***
+
 Path Parameter:
 
 productId (string, required): The unique identifier for the product.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Product Restored Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "product not found" }
 ```
-### Create Brand `/api/v1/brand/admin/create-brand`
-### Request
-FormData:
+**Create Brand `/api/v1/brand/admin/create-brand`**
 
+***Request***
+
+FormData:
 ```javascript
 {"brand_name": "Apple", "image": upload image}
 ```
-### Responses
-HTTP Status Code: 201 CREATED
+***Responses***
 
+*HTTP Status Code: 201 CREATED*
 ```javascript
 {
     "success": true,
@@ -451,12 +503,13 @@ HTTP Status Code: 201 CREATED
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Validation Error" }
 ```
-HTTP Status Code: 409 CONFLICT
+*HTTP Status Code: 409 CONFLICT*
 ```javascript
 {
     "success": false,
@@ -478,8 +531,10 @@ HTTP Status Code: 409 CONFLICT
     }
 }
 ```
-### Update Brand `/api/v1/brand/admin/update-brand/{brandId}`
-### Request
+**Update Brand `/api/v1/brand/admin/update-brand/{brandId}`**
+
+***Request***
+
 Path Parameter:
 
 brandId (string, required): The unique identifier for the brand.
@@ -488,9 +543,9 @@ Request Body:
 ```javascript
 {"brand_name": "Apple"}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -512,17 +567,20 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Brand Name is Required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-### Update Brand Image `/api/v1/brand/admin/update-brand-image/{brandId}`
-### Request
+**Update Brand Image `/api/v1/brand/admin/update-brand-image/{brandId}`**
+
+***Request***
+
 Path Parameter:
 
 brandId (string, required): The unique identifier for the brand.
@@ -531,9 +589,9 @@ FormData:
 ```javascript
 {"image": upload image}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -555,63 +613,73 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Brand Image is Required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-### Delete Brand `/api/v1/brand/admin/delete-brand/{brandId}`
-### Request
+**Delete Brand `/api/v1/brand/admin/delete-brand/{brandId}`**
+
+***Request***
+
 Path Parameter:
 
 brandId (string, required): The unique identifier for the brand.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Brand Deleted Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-### Restore Brand `/api/v1/brand/admin/restore-brand/{brandId}`
-### Request
+**Restore Brand `/api/v1/brand/admin/restore-brand/{brandId}`**
+
+***Request***
+
 Path Parameter:
 
 brandId (string, required): The unique identifier for the brand.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Brand Restored Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-### Create Category `/api/v1/category/admin/create-category`
-### Request
-FormData:
+**Create Category `/api/v1/category/admin/create-category`**
 
+***Request***
+
+FormData:
 ```javascript
 {"category_name": "Smart Phone", "image": upload image}
 ```
-### Responses
-HTTP Status Code: 201 CREATED
+***Responses***
 
+*HTTP Status Code: 201 CREATED*
 ```javascript
 {
     "success": true,
@@ -633,12 +701,13 @@ HTTP Status Code: 201 CREATED
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Validation Error" }
 ```
-HTTP Status Code: 409 CONFLICT
+*HTTP Status Code: 409 CONFLICT*
 ```javascript
 {
     "success": false,
@@ -660,8 +729,10 @@ HTTP Status Code: 409 CONFLICT
     }
 }
 ```
-### Update Brand `/api/v1/category/admin/update-category/{categoryId}`
-### Request
+**Update Brand `/api/v1/category/admin/update-category/{categoryId}`**
+
+***Request***
+
 Path Parameter:
 
 categoryId (string, required): The unique identifier for the category.
@@ -670,9 +741,9 @@ Request Body:
 ```javascript
 {"category_name": "Smart Phones"}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -694,17 +765,20 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Category Name is Required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-### Update Category Image `/api/v1/category/admin/update-category-image/{categoryId}`
-### Request
+**Update Category Image `/api/v1/category/admin/update-category-image/{categoryId}`**
+
+***Request***
+
 Path Parameter:
 
 categoryId (string, required): The unique identifier for the category.
@@ -713,9 +787,9 @@ FormData:
 ```javascript
 {"image": upload image}
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -737,55 +811,66 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 400 BAD REQUEST
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Category Image is Required" }
 ```
-HTTP Status Code: 404 NOT FOUND
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-### Delete Brand `/api/v1/category/admin/delete-category/{categoryId}`
-### Request
+**Delete Brand `/api/v1/category/admin/delete-category/{categoryId}`**
+
+***Request***
+
 Path Parameter:
 
 categoryId (string, required): The unique identifier for the category.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Category Deleted Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-### Restore Category `/api/v1/category/admin/restore-category/{categoryId}`
-### Request
+**Restore Category `/api/v1/category/admin/restore-category/{categoryId}`**
+
+***Request***
+
 Path Parameter:
 
 categoryId (string, required): The unique identifier for the category.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
     "message": "Category Restored Successfully"
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-### Get All or Filtered Orders `/api/v1/order/admin/get-all-filtered-orders`
-### Request
+**Get All or Filtered Orders `/api/v1/order/admin/get-all-filtered-orders`**
+
+***Request***
+
 Query Parameters:
 
 order_id | order_status | payment_status | _page | payment_method | _limit | createdAt | updatedAt | amount | item
@@ -795,9 +880,10 @@ Use _limit for the number of documents you want to fetch
 Use _page for changing the page number
 
 Use remaining of the above parameters to filtering the orders.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -870,15 +956,16 @@ HTTP Status Code: 200 OK
     ]
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 {
     "success": false,
     "message": "Orders Not Found"
 }
 ```
-HTTP Status Code: 400 BAD REQUEST
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 {
     "success": false,
@@ -886,14 +973,17 @@ HTTP Status Code: 400 BAD REQUEST
     "error": "Argument passed in must be a string of 12 bytes or a string of 24 hex characters or an integer"
 }
 ```
-### Fetch Order By Id `/api/v1/order/admin/get-order-details/{orderId}`
-### Request
+**Fetch Order By Id `/api/v1/order/admin/get-order-details/{orderId}`**
+
+***Request***
+
 Path Parameter:
 
 orderId (string, required): The unique identifier for the order.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -966,8 +1056,9 @@ HTTP Status Code: 200 OK
     ]
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 {
     "success": true,
@@ -975,16 +1066,19 @@ HTTP Status Code: 404 NOT FOUND
     "order": []
 }
 ```
-### Update Order Status `/api/v1/order/admin/update-order-status/{orderId}/{status}`
-### Request
+**Update Order Status `/api/v1/order/admin/update-order-status/{orderId}/{status}`**
+
+***Request***
+
 Path Parameter:
 
 orderId (string, required): The unique identifier for the order.
 
 status (string, required): The Updated Order Status.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -1041,25 +1135,29 @@ HTTP Status Code: 200 OK
     ]
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Order Not Found" }
 ```
-HTTP Status Code: 400 BAD REQUEST
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Invalid Order ID" }
 ```
-### Update Payment Status `/api/v1/order/admin/update-payment-status/{orderId}/{status}`
-### Request
+**Update Payment Status `/api/v1/order/admin/update-payment-status/{orderId}/{status}`**
+
+***Request***
+
 Path Parameter:
 
 orderId (string, required): The unique identifier for the order.
 
 status (string, required): The Updated Payment Status.
-### Responses
-HTTP Status Code: 200 OK
 
+***Responses***
+
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -1130,19 +1228,21 @@ HTTP Status Code: 200 OK
     ]
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Order Not Found" }
 ```
-HTTP Status Code: 400 BAD REQUEST
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Invalid Order ID" }
 ```
-### Create Promo `/api/v1/promo/admin/create-promo`
-### Request
-FormData:
+**Create Promo `/api/v1/promo/admin/create-promo`**
 
+***Request***
+
+FormData:
 ```javascript
 {
   "brand": "brand_id",
@@ -1157,9 +1257,9 @@ FormData:
   "image_7": upload image,
 }
 ```
-### Responses
-HTTP Status Code: 201 CREATED
+***Responses***
 
+*HTTP Status Code: 201 CREATED*
 ```javascript
 {
     "success": true,
@@ -1225,13 +1325,16 @@ HTTP Status Code: 201 CREATED
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Order Not Found" }
 ```
-### Update Promo Image `/api/v1/promo/admin/update-promo-image/{imageIndex}`
-### Request
+**Update Promo Image `/api/v1/promo/admin/update-promo-image/{imageIndex}`**
+
+***Request***
+
 Path Parameter:
 
 imageIndex (string, required): The image index in the image array you want to update. Array contains total of 7 images.
@@ -1242,9 +1345,9 @@ FormData:
   "image": upload image,
 }
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -1310,18 +1413,21 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Promo Not Found" }
 ```
-HTTP Status Code: 400 BAD REQUEST
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Image is Required" }
 ```
-### Update Promo `/api/v1/promo/admin/update-promo`
-### Request
-Request Body
+**Update Promo `/api/v1/promo/admin/update-promo`**
+
+***Request***
+
+Request Body:
 ```javascript
 {
   "category": "Mens Watch",
@@ -1330,9 +1436,9 @@ Request Body
   "promo_heading": "Shop Your Favourites",
 }
 ```
-### Responses
-HTTP Status Code: 200 OK
+***Responses***
 
+*HTTP Status Code: 200 OK*
 ```javascript
 {
     "success": true,
@@ -1398,12 +1504,284 @@ HTTP Status Code: 200 OK
     }
 }
 ```
-### Error Responses
-HTTP Status Code: 404 NOT FOUND
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Promo Not Found" }
 ```
-HTTP Status Code: 400 BAD REQUEST
+*HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Fill The Required Fields" }
+```
+## User APIs
+**Add To Cart `/api/v1/cart/user/add-to-cart/{productId}`**
+
+***Request***
+
+Path Parameter:
+
+productId (string, required): The unique identifier for the product.
+
+***Responses***
+
+*HTTP Status Code: 201 CREATED*
+
+When user adds first item to the cart. Say creates the cart.
+```javascript
+{
+    "success": true,
+    "message": "Item Added To Cart",
+    "cart": {
+        "_id": "6543c74d908cd5da8dc1c661",
+        "user": "64d9cca1fd210ef389e268a0",
+        "items": [
+            {
+                "product": {
+                    "thumbnail": {
+                        "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "samsung_universe_9_thumbnail.jpg",
+                        "size": 3713166
+                    },
+                    "_id": "650140714f41af7936475ad0",
+                    "product_name": "Samsung Universe 19",
+                    "slug": "samsung-universe-19",
+                    "brand": "650139fb4f41af7936475a70",
+                    "category": "650138c14f41af7936475a64",
+                    "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+                    "stock": 253,
+                    "price": 401,
+                    "discountPercentage": 9.36,
+                    "images": [
+                        {
+                            "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_thumbnail.jpg",
+                            "size": 3713166,
+                            "_id": "6527c6206bb91281f855c1a6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image1.jpg",
+                            "size": 47518,
+                            "_id": "6527c6356bb91281f855c1b6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image3.jpeg",
+                            "size": 24987,
+                            "_id": "6527c6496bb91281f855c1c7"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                            "contentType": "image/png",
+                            "originalname": "amsung_universe_9_image2.png",
+                            "size": 235547,
+                            "_id": "6527c6576bb91281f855c1d9"
+                        }
+                    ],
+                    "createdAt": "2023-09-13T04:54:09.597Z",
+                    "updatedAt": "2023-10-12T10:15:19.603Z",
+                    "__v": 1,
+                    "deleted": false,
+                    "highlights": [
+                        "4GB RAM",
+                        "64GB ROM",
+                        "3 year warrantee",
+                        "20mpx front cam",
+                        "183gm"
+                    ]
+                },
+                "quantity": 1,
+                "_id": "6543c74d908cd5da8dc1c662"
+            }
+        ],
+        "createdAt": "2023-11-02T15:59:09.140Z",
+        "updatedAt": "2023-11-02T15:59:09.140Z",
+        "__v": 0
+    }
+}
+```
+*HTTP Status Code: 200 OK*
+
+When user adds item to the already existing cart (Already having product(s) in the cart)
+```javascript
+{
+    "success": true,
+    "message": "Item Added To Cart",
+    "cart": {
+        "_id": "6543c74d908cd5da8dc1c661",
+        "user": "64d9cca1fd210ef389e268a0",
+        "items": [
+            {
+                "product": {
+                    "thumbnail": {
+                        "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "samsung_universe_9_thumbnail.jpg",
+                        "size": 3713166
+                    },
+                    "_id": "650140714f41af7936475ad0",
+                    "product_name": "Samsung Universe 19",
+                    "slug": "samsung-universe-19",
+                    "brand": "650139fb4f41af7936475a70",
+                    "category": "650138c14f41af7936475a64",
+                    "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+                    "stock": 253,
+                    "price": 401,
+                    "discountPercentage": 9.36,
+                    "images": [
+                        {
+                            "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_thumbnail.jpg",
+                            "size": 3713166,
+                            "_id": "6527c6206bb91281f855c1a6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image1.jpg",
+                            "size": 47518,
+                            "_id": "6527c6356bb91281f855c1b6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image3.jpeg",
+                            "size": 24987,
+                            "_id": "6527c6496bb91281f855c1c7"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                            "contentType": "image/png",
+                            "originalname": "amsung_universe_9_image2.png",
+                            "size": 235547,
+                            "_id": "6527c6576bb91281f855c1d9"
+                        }
+                    ],
+                    "createdAt": "2023-09-13T04:54:09.597Z",
+                    "updatedAt": "2023-10-12T10:15:19.603Z",
+                    "__v": 1,
+                    "deleted": false,
+                    "highlights": [
+                        "4GB RAM",
+                        "64GB ROM",
+                        "3 year warrantee",
+                        "20mpx front cam",
+                        "183gm"
+                    ]
+                },
+                "quantity": 1,
+                "_id": "6543c74d908cd5da8dc1c662"
+            },
+            {} // Other products added to cart
+        ],
+        "createdAt": "2023-11-02T15:59:09.140Z",
+        "updatedAt": "2023-11-02T15:59:09.140Z",
+        "__v": 0
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 409 CONFLICT*
+```javascript
+{ success: false, message: "Promo Not Found" }
+```
+*HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{success: false, message: "Item is already present in your cart"}
+```
+**Get Cart Items `/api/v1/cart/user/get-cart-items`**
+
+***Request***
+
+Request Object is not required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Cart Items Fetched Successfully",
+    "cart": {
+        "_id": "6543c74d908cd5da8dc1c661",
+        "user": "64d9cca1fd210ef389e268a0",
+        "items": [
+            {
+                "product": {
+                    "thumbnail": {
+                        "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "samsung_universe_9_thumbnail.jpg",
+                        "size": 3713166
+                    },
+                    "_id": "650140714f41af7936475ad0",
+                    "product_name": "Samsung Universe 19",
+                    "slug": "samsung-universe-19",
+                    "brand": "650139fb4f41af7936475a70",
+                    "category": "650138c14f41af7936475a64",
+                    "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+                    "stock": 253,
+                    "price": 401,
+                    "discountPercentage": 9.36,
+                    "images": [
+                        {
+                            "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_thumbnail.jpg",
+                            "size": 3713166,
+                            "_id": "6527c6206bb91281f855c1a6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image1.jpg",
+                            "size": 47518,
+                            "_id": "6527c6356bb91281f855c1b6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image3.jpeg",
+                            "size": 24987,
+                            "_id": "6527c6496bb91281f855c1c7"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                            "contentType": "image/png",
+                            "originalname": "amsung_universe_9_image2.png",
+                            "size": 235547,
+                            "_id": "6527c6576bb91281f855c1d9"
+                        }
+                    ],
+                    "createdAt": "2023-09-13T04:54:09.597Z",
+                    "updatedAt": "2023-10-12T10:15:19.603Z",
+                    "__v": 1,
+                    "deleted": false,
+                    "highlights": [
+                        "4GB RAM",
+                        "64GB ROM",
+                        "3 year warrantee",
+                        "20mpx front cam",
+                        "183gm"
+                    ]
+                },
+                "quantity": 1,
+                "_id": "6543c74d908cd5da8dc1c662"
+            }
+        ],
+        "createdAt": "2023-11-02T15:59:09.140Z",
+        "updatedAt": "2023-11-02T15:59:09.140Z",
+        "__v": 0
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Cart Not Found" }
 ```
