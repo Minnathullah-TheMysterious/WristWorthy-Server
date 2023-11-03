@@ -1505,6 +1505,7 @@ Request Body:
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Promo Not Found" }
@@ -1686,6 +1687,7 @@ When user adds item to the already existing cart (Already having product(s) in t
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 409 CONFLICT*
 ```javascript
 { success: false, message: "Promo Not Found" }
@@ -1781,6 +1783,7 @@ Request Object is not required
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Cart Not Found" }
@@ -1811,6 +1814,7 @@ productId (string, required): The unique identifier for the product.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "User Not Found / Product Not Found In The Cart" }
@@ -1832,6 +1836,7 @@ Request Object is not required
 {success: true, message: "Cart Has Been Reset"}
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Cart not found" }
@@ -1931,6 +1936,7 @@ productQuantity (string, required): The quantity you want to update.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Cart not found / Product Not Found" }
@@ -2053,6 +2059,7 @@ Request Object Is Not Required
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Orders Not Found" }
@@ -2192,6 +2199,7 @@ Request Body:
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 400 BAD REQUEST*
 ```javascript
 { success: false, message: "Required Fields Error" }
@@ -2312,6 +2320,7 @@ orderId (string, required): The unique identifier for the order.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Order Not Found / User Orders Not Found" }
@@ -2364,6 +2373,7 @@ Request Object is not required
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "User Not Found" }
@@ -2433,6 +2443,7 @@ Request Body:
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "User Not Found" }
@@ -2476,6 +2487,7 @@ Request Object Is Not Required
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "User Not Found" }
@@ -2549,6 +2561,7 @@ Request Body:
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Address Not Found / User Not Found" }
@@ -2604,6 +2617,7 @@ addressId (string, required): The unique identifier for the address.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Address Not Found / User Not Found" }
@@ -2654,6 +2668,7 @@ productId (string, required): The unique identifier for the product.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 409 CONFLICT*
 ```javascript
 {success: false, message: "Item is already present in your Wishlist",}
@@ -2742,6 +2757,7 @@ Request object is not required
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Wishlist Not Found" }
@@ -2833,7 +2849,76 @@ productId (string, required): The unique identifier for the product.
 }
 ```
 ***Error Responses***
+
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Wishlist Not Found / Item Not Found" }
 ```
+## Public APIs
+**Register `POST /api/v1/auth/register`**
+
+***Request***
+
+Request Body
+```javascript
+{
+  "user_name": "Mohammed Minnathullah",
+  "email": "test8@test.com",
+  "password": "123456",
+  "phone": "+917337234828",
+  "confirm_password": "123456"
+}
+```
+***Responses***
+
+*HTTP Status Code: 201 CREATED*
+```javascript
+{
+    "success": true,
+    "message": "User Registered Successfully",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NTQ0OTk0MTIxNWU4M2I2NzRmY2JhM2MiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5ODk5NDQ5OCwiZXhwIjoxNjk5NTk5Mjk4fQ.L70Tn_YCMuQ1dQ0uVlcQmO5XUeqFko2SthLQBJvbXRk",
+    "user": {
+        "_id": "65449941215e83b674fcba3c",
+        "role": "user"
+    }
+}
+```
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Required Fields Error | Passwords Does Not Match" }
+```
+  *HTTP Status Code: 409 CONFLICT*
+```javascript
+{ success: false, message: "Already registered user" }
+```
+**Longin `POST /api/v1/auth/login`**
+
+***Request***
+
+Request Body
+```javascript
+{
+    "username": "+919652336445",
+    "password": "123456"
+    //Provide either your `registered email` or your `registered phone number` in the `username`
+}
+```
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "User Logged In successfully",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NGQ5Y2NhMWZkMjEwZWYzODllMjY4YTAiLCJyb2xlIjoidXNlciIsImlhdCI6MTY5ODk5MDQwOCwiZXhwIjoxNjk5NTk1MjA4fQ.QpbbuAwRCWcblIYrvHRV60FMGBP2w1M4E-kelh8DcRo",
+    "user": {
+        "_id": "64d9cca1fd210ef389e268a0",
+        "role": "user"
+    }
+}
+```
+***Error Responses***
+
+*HTTP Status Code: 400 BAD REQUEST* `Required fields are not provided`
