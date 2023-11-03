@@ -82,7 +82,7 @@ Admins can add, edit, or remove brands and categories for efficient product orga
 Admins have the ability to view and manage orders, including order status updates and order fulfillment.
 ## API Documentaion
 ### Admin APIs
-**Create Product `/api/v1/product/admin/create-product`**
+**Create Product `POST /api/v1/product/admin/create-product`**
 
 ***Request***
 
@@ -185,7 +185,7 @@ FormData:
 ```javascript
 { success: false, message: "Product With The Same Name Already exists"}
 ```
-**Update Product `/api/v1/product/admin/update-product/{productId}`**
+**Update Product `PUT /api/v1/product/admin/update-product/{productId}`**
 
 ***Request***
 
@@ -243,7 +243,7 @@ Request Body:
 ```javascript
 { success: false, message: "Validation error" }
 ```
-**Update Product Thumbnail `/api/v1/product/admin/update-product-thumbnail/{productId}`**
+**Update Product Thumbnail `PUT /api/v1/product/admin/update-product-thumbnail/{productId}`**
 
 ***Request***
 
@@ -333,7 +333,7 @@ FormData:
 ```javascript
 { success: false, message: "product not found" }
 ```
-**Update Product Image `/api/v1/product/admin/update-product-image/{productId}/{imageIndex}`**
+**Update Product Image `PUT /api/v1/product/admin/update-product-image/{productId}/{imageIndex}`**
 
 ***Request***
 
@@ -425,7 +425,7 @@ FormData:
 ```javascript
 { success: false, message: "product not found" }
 ```
-**Delete Product `/api/v1/product/admin/delete-product/{productId}`**
+**Delete Product `DELETE /api/v1/product/admin/delete-product/{productId}`**
 
 ***Request***
 
@@ -448,7 +448,7 @@ productId (string, required): The unique identifier for the product.
 ```javascript
 { success: false, message: "product not found" }
 ```
-**Restore Product `/api/v1/product/admin/restore-product/{productId}`**
+**Restore Product `PUT /api/v1/product/admin/restore-product/{productId}`**
 
 ***Request***
 
@@ -471,7 +471,7 @@ productId (string, required): The unique identifier for the product.
 ```javascript
 { success: false, message: "product not found" }
 ```
-**Create Brand `/api/v1/brand/admin/create-brand`**
+**Create Brand `POST /api/v1/brand/admin/create-brand`**
 
 ***Request***
 
@@ -531,7 +531,7 @@ FormData:
     }
 }
 ```
-**Update Brand `/api/v1/brand/admin/update-brand/{brandId}`**
+**Update Brand `PUT /api/v1/brand/admin/update-brand/{brandId}`**
 
 ***Request***
 
@@ -577,7 +577,7 @@ Request Body:
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-**Update Brand Image `/api/v1/brand/admin/update-brand-image/{brandId}`**
+**Update Brand Image `PUT /api/v1/brand/admin/update-brand-image/{brandId}`**
 
 ***Request***
 
@@ -623,7 +623,7 @@ FormData:
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-**Delete Brand `/api/v1/brand/admin/delete-brand/{brandId}`**
+**Delete Brand `DELETE /api/v1/brand/admin/delete-brand/{brandId}`**
 
 ***Request***
 
@@ -646,7 +646,7 @@ brandId (string, required): The unique identifier for the brand.
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-**Restore Brand `/api/v1/brand/admin/restore-brand/{brandId}`**
+**Restore Brand `PUT /api/v1/brand/admin/restore-brand/{brandId}`**
 
 ***Request***
 
@@ -669,7 +669,7 @@ brandId (string, required): The unique identifier for the brand.
 ```javascript
 { success: false, message: "Brand Not Found" }
 ```
-**Create Category `/api/v1/category/admin/create-category`**
+**Create Category `POST /api/v1/category/admin/create-category`**
 
 ***Request***
 
@@ -729,7 +729,7 @@ FormData:
     }
 }
 ```
-**Update Brand `/api/v1/category/admin/update-category/{categoryId}`**
+**Update Category `PUT /api/v1/category/admin/update-category/{categoryId}`**
 
 ***Request***
 
@@ -775,7 +775,7 @@ Request Body:
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-**Update Category Image `/api/v1/category/admin/update-category-image/{categoryId}`**
+**Update Category Image `UPDATE /api/v1/category/admin/update-category-image/{categoryId}`**
 
 ***Request***
 
@@ -821,7 +821,7 @@ FormData:
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-**Delete Brand `/api/v1/category/admin/delete-category/{categoryId}`**
+**Delete Category `DELETE /api/v1/category/admin/delete-category/{categoryId}`**
 
 ***Request***
 
@@ -844,7 +844,7 @@ categoryId (string, required): The unique identifier for the category.
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-**Restore Category `/api/v1/category/admin/restore-category/{categoryId}`**
+**Restore Category `PUT /api/v1/category/admin/restore-category/{categoryId}`**
 
 ***Request***
 
@@ -867,7 +867,7 @@ categoryId (string, required): The unique identifier for the category.
 ```javascript
 { success: false, message: "Category Not Found" }
 ```
-**Get All or Filtered Orders `/api/v1/order/admin/get-all-filtered-orders`**
+**Get All or Filtered Orders `GET /api/v1/order/admin/get-all-filtered-orders`**
 
 ***Request***
 
@@ -973,7 +973,7 @@ Use remaining of the above parameters to filtering the orders.
     "error": "Argument passed in must be a string of 12 bytes or a string of 24 hex characters or an integer"
 }
 ```
-**Fetch Order By Id `/api/v1/order/admin/get-order-details/{orderId}`**
+**Fetch Order By Id `GET /api/v1/order/admin/get-order-details/{orderId}`**
 
 ***Request***
 
@@ -1066,7 +1066,7 @@ orderId (string, required): The unique identifier for the order.
     "order": []
 }
 ```
-**Update Order Status `/api/v1/order/admin/update-order-status/{orderId}/{status}`**
+**Update Order Status `PUT /api/v1/order/admin/update-order-status/{orderId}/{status}`**
 
 ***Request***
 
@@ -1145,7 +1145,7 @@ status (string, required): The Updated Order Status.
 ```javascript
 { success: false, message: "Invalid Order ID" }
 ```
-**Update Payment Status `/api/v1/order/admin/update-payment-status/{orderId}/{status}`**
+**Update Payment Status `PUT /api/v1/order/admin/update-payment-status/{orderId}/{status}`**
 
 ***Request***
 
@@ -1238,7 +1238,7 @@ status (string, required): The Updated Payment Status.
 ```javascript
 { success: false, message: "Invalid Order ID" }
 ```
-**Create Promo `/api/v1/promo/admin/create-promo`**
+**Create Promo `POST /api/v1/promo/admin/create-promo`**
 
 ***Request***
 
@@ -1331,7 +1331,7 @@ FormData:
 ```javascript
 { success: false, message: "Order Not Found" }
 ```
-**Update Promo Image `/api/v1/promo/admin/update-promo-image/{imageIndex}`**
+**Update Promo Image `PUT /api/v1/promo/admin/update-promo-image/{imageIndex}`**
 
 ***Request***
 
@@ -1423,7 +1423,7 @@ FormData:
 ```javascript
 { success: false, message: "Image is Required" }
 ```
-**Update Promo `/api/v1/promo/admin/update-promo`**
+**Update Promo `PUT /api/v1/promo/admin/update-promo`**
 
 ***Request***
 
@@ -1514,7 +1514,7 @@ Request Body:
 { success: false, message: "Fill The Required Fields" }
 ```
 ## User APIs
-**Add To Cart `/api/v1/cart/user/add-to-cart/{productId}`**
+**Add To Cart or Create Cart `POST /api/v1/cart/user/add-to-cart/{productId}`**
 
 ***Request***
 
@@ -1694,7 +1694,7 @@ When user adds item to the already existing cart (Already having product(s) in t
 ```javascript
 {success: false, message: "Item is already present in your cart"}
 ```
-**Get Cart Items `/api/v1/cart/user/get-cart-items`**
+**Get Cart Items `GET /api/v1/cart/user/get-cart-items`**
 
 ***Request***
 
@@ -1784,4 +1784,1056 @@ Request Object is not required
 *HTTP Status Code: 404 NOT FOUND*
 ```javascript
 { success: false, message: "Cart Not Found" }
+```
+**Delete A Cart Item `DELETE /api/v1/cart/user/delete-cart-item/{productId}`**
+
+***Request***
+
+Path Parameter:
+
+productId (string, required): The unique identifier for the product.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Item Removed From Cart",
+    "cart": {
+        "_id": "6543c74d908cd5da8dc1c661",
+        "user": "64d9cca1fd210ef389e268a0",
+        "items": [],
+        "createdAt": "2023-11-02T15:59:09.140Z",
+        "updatedAt": "2023-11-03T03:33:09.541Z",
+        "__v": 1
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "User Not Found / Product Not Found In The Cart" }
+```
+  *HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Validation Error" }
+```
+**Delete The Cart `DELETE /api/v1/cart/user/delete-cart`**
+
+***Request***
+
+Request Object is not required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{success: true, message: "Cart Has Been Reset"}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Cart not found" }
+```
+  *HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Not a valid user Id" }
+```
+**Update Product Quantity In The Cart `PUT /api/v1/cart/user/update-product-quantity/{productId}/{productQuantity}`**
+
+***Request***
+
+Path Parameter:
+
+productId (string, required): The unique identifier for the product.
+
+productQuantity (string, required): The quantity you want to update.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Quantity Updated Successfully",
+    "cart": {
+        "_id": "6543c74d908cd5da8dc1c661",
+        "user": "64d9cca1fd210ef389e268a0",
+        "items": [
+            {
+                "product": {
+                    "thumbnail": {
+                        "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "samsung_universe_9_thumbnail.jpg",
+                        "size": 3713166
+                    },
+                    "_id": "650140714f41af7936475ad0",
+                    "product_name": "Samsung Universe 19",
+                    "slug": "samsung-universe-19",
+                    "brand": "650139fb4f41af7936475a70",
+                    "category": "650138c14f41af7936475a64",
+                    "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+                    "stock": 253,
+                    "price": 401,
+                    "discountPercentage": 9.36,
+                    "images": [
+                        {
+                            "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_thumbnail.jpg",
+                            "size": 3713166,
+                            "_id": "6527c6206bb91281f855c1a6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image1.jpg",
+                            "size": 47518,
+                            "_id": "6527c6356bb91281f855c1b6"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                            "contentType": "image/jpeg",
+                            "originalname": "samsung_universe_9_image3.jpeg",
+                            "size": 24987,
+                            "_id": "6527c6496bb91281f855c1c7"
+                        },
+                        {
+                            "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                            "contentType": "image/png",
+                            "originalname": "amsung_universe_9_image2.png",
+                            "size": 235547,
+                            "_id": "6527c6576bb91281f855c1d9"
+                        }
+                    ],
+                    "createdAt": "2023-09-13T04:54:09.597Z",
+                    "updatedAt": "2023-10-12T10:15:19.603Z",
+                    "__v": 1,
+                    "deleted": false,
+                    "highlights": [
+                        "4GB RAM",
+                        "64GB ROM",
+                        "3 year warrantee",
+                        "20mpx front cam",
+                        "183gm"
+                    ]
+                },
+                "quantity": 8,
+                "_id": "65446d80887d7a386ef887e3"
+            }
+        ],
+        "createdAt": "2023-11-02T15:59:09.140Z",
+        "updatedAt": "2023-11-03T03:48:24.155Z",
+        "__v": 3
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Cart not found / Product Not Found" }
+```
+  *HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Not a valid user Id / Not A Valid Product ID" }
+```
+**Get All User Orders `GET /api/v1/order/user/get-orders`**
+
+***Request***
+
+Request Object Is Not Required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+  "success": true,
+  "message": "Orders Fetched Successfully",
+  "orders": {
+    "_id": "6519145d455006b5432841dc",
+    "user": "64d9cca1fd210ef389e268a0",
+    "orders": [
+      {
+        "paymentStatus": "pending",
+        "products": [
+          {
+            "product_id": {
+              "thumbnail": {
+                "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166
+             },
+             "_id": "650140714f41af7936475ad0",
+             "product_name": "Samsung Universe 19",
+             "slug": "samsung-universe-19",
+             "brand": "650139fb4f41af7936475a70",
+             "category": "650138c14f41af7936475a64",
+             "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+             "stock": 253,
+             "price": 401,
+             "discountPercentage": 9.36,
+             "images": [
+             {
+                "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166,
+                "_id": "6527c6206bb91281f855c1a6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image1.jpg",
+                "size": 47518,
+                "_id": "6527c6356bb91281f855c1b6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image3.jpeg",
+                "size": 24987,
+                "_id": "6527c6496bb91281f855c1c7"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                "contentType": "image/png",
+                "originalname": "amsung_universe_9_image2.png",
+                "size": 235547,
+                "_id": "6527c6576bb91281f855c1d9"
+              }
+            ],
+            "createdAt": "2023-09-13T04:54:09.597Z",
+            "updatedAt": "2023-10-12T10:15:19.603Z",
+            "__v": 1,
+            "deleted": false,
+            "highlights": [
+              "4GB RAM",
+              "64GB ROM",
+              "3 year warrantee",
+              "20mpx front cam",
+              "183gm"
+            ]
+          },
+          "quantity": 1,
+          "_id": "6519145d455006b5432841de"
+        },
+        // Remaining products in this order
+      ],
+      "totalItems": 2,
+      "totalAmount": 534,
+      "shippingAddress": {
+        "firstName": "Mohammed ",
+        "lastName": "Rehan",
+        "emailAddress": "rehan@zayd.com",
+        "mobileNumber": "+917337234824",
+        "altMobileNumber": "+919652336445",
+        "country": "india",
+        "street": "H-No: 5-16, Near royal function hall",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pinCode": "506367",
+        "dist": "Siddipet",
+        "mandal": "Maddur",
+        "village": "Maddur",
+        "_id": "64f1579c2239b552d711a8b4"
+      },
+      "paymentMethod": "cash",
+      "status": "cancelled",
+      "_id": "6519145d455006b5432841dd",
+      "createdAt": "2023-10-06T11:12:14.446Z",
+      "updatedAt": "2023-11-02T13:46:22.503Z"
+    },
+    // Other remaining orders of the user
+    ]
+  }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Orders Not Found" }
+```
+**Place Order `POST /api/v1/order/user/place-order`**
+
+***Request***
+
+Request Body:
+```javascript
+{
+    "products": [{"product_id": "650140714f41af7936475ad0", "quantity": 2}, {"product_id": "650140fb4f41af7936475ad4", "quantity": 2}, //Add more products as you want],
+    "totalItems": 2,
+    "totalAmount": 1526,
+    "shippingAddress": {
+        firstName: String,
+        lastName: String,
+        emailAddress: String,
+        mobileNumber: String,
+        altMobileNumber: String,
+        country: String,
+        street: String,
+        city: String,
+        state: String,
+        pinCode: String,
+        dist: String,
+        mandal: String,
+        village: String,},
+    "paymentMethod": "card"
+}
+```
+***Responses***
+
+*HTTP Status Code: 201 CREATED*
+```javascript
+{
+  "success": true,
+  "message": "Order Placed Successfully",
+  "orders": {
+    "_id": "6519145d455006b5432841dc",
+    "user": "64d9cca1fd210ef389e268a0",
+    "orders": [
+      {
+        "paymentStatus": "pending",
+        "products": [
+          {
+            "product_id": {
+              "thumbnail": {
+                "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166
+             },
+             "_id": "650140714f41af7936475ad0",
+             "product_name": "Samsung Universe 19",
+             "slug": "samsung-universe-19",
+             "brand": "650139fb4f41af7936475a70",
+             "category": "650138c14f41af7936475a64",
+             "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+             "stock": 253,
+             "price": 401,
+             "discountPercentage": 9.36,
+             "images": [
+             {
+                "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166,
+                "_id": "6527c6206bb91281f855c1a6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image1.jpg",
+                "size": 47518,
+                "_id": "6527c6356bb91281f855c1b6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image3.jpeg",
+                "size": 24987,
+                "_id": "6527c6496bb91281f855c1c7"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                "contentType": "image/png",
+                "originalname": "amsung_universe_9_image2.png",
+                "size": 235547,
+                "_id": "6527c6576bb91281f855c1d9"
+              }
+            ],
+            "createdAt": "2023-09-13T04:54:09.597Z",
+            "updatedAt": "2023-10-12T10:15:19.603Z",
+            "__v": 1,
+            "deleted": false,
+            "highlights": [
+              "4GB RAM",
+              "64GB ROM",
+              "3 year warrantee",
+              "20mpx front cam",
+              "183gm"
+            ]
+          },
+          "quantity": 1,
+          "_id": "6519145d455006b5432841de"
+        },
+        // Remaining products in this order
+      ],
+      "totalItems": 2,
+      "totalAmount": 534,
+      "shippingAddress": {
+        "firstName": "Mohammed ",
+        "lastName": "Rehan",
+        "emailAddress": "rehan@zayd.com",
+        "mobileNumber": "+917337234824",
+        "altMobileNumber": "+919652336445",
+        "country": "india",
+        "street": "H-No: 5-16, Near royal function hall",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pinCode": "506367",
+        "dist": "Siddipet",
+        "mandal": "Maddur",
+        "village": "Maddur",
+        "_id": "64f1579c2239b552d711a8b4"
+      },
+      "paymentMethod": "cash",
+      "status": "cancelled",
+      "_id": "6519145d455006b5432841dd",
+      "createdAt": "2023-10-06T11:12:14.446Z",
+      "updatedAt": "2023-11-02T13:46:22.503Z"
+    },
+    // Other remaining orders of the user
+    ]
+  }
+}
+```
+***Error Responses***
+*HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Required Fields Error" }
+```
+**Cancel Order `PUT /api/v1/order/user/cancel-order/{orderId}`**
+
+***Request***
+
+Path Parameter:
+
+orderId (string, required): The unique identifier for the order.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+  "success": true,
+  "message": "Order Cancelled Successfully",
+  "orders": {
+    "_id": "6519145d455006b5432841dc",
+    "user": "64d9cca1fd210ef389e268a0",
+    "orders": [
+      {
+        "paymentStatus": "pending",
+        "products": [
+          {
+            "product_id": {
+              "thumbnail": {
+                "location": "public\\images\\product\\thumbnail-1697105640977-721530433-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166
+             },
+             "_id": "650140714f41af7936475ad0",
+             "product_name": "Samsung Universe 19",
+             "slug": "samsung-universe-19",
+             "brand": "650139fb4f41af7936475a70",
+             "category": "650138c14f41af7936475a64",
+             "description": "Samsung's new variant which goes beyond Galaxy to the Universe.",
+             "stock": 253,
+             "price": 401,
+             "discountPercentage": 9.36,
+             "images": [
+             {
+                "location": "public\\images\\product\\image-1697105440146-897086962-samsung_universe_9_thumbnail.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_thumbnail.jpg",
+                "size": 3713166,
+                "_id": "6527c6206bb91281f855c1a6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105461546-487149141-samsung_universe_9_image1.jpg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image1.jpg",
+                "size": 47518,
+                "_id": "6527c6356bb91281f855c1b6"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105481621-829965747-samsung_universe_9_image3.jpeg",
+                "contentType": "image/jpeg",
+                "originalname": "samsung_universe_9_image3.jpeg",
+                "size": 24987,
+                "_id": "6527c6496bb91281f855c1c7"
+              },
+              {
+                "location": "public\\images\\product\\image-1697105495244-598606848-amsung_universe_9_image2.png",
+                "contentType": "image/png",
+                "originalname": "amsung_universe_9_image2.png",
+                "size": 235547,
+                "_id": "6527c6576bb91281f855c1d9"
+              }
+            ],
+            "createdAt": "2023-09-13T04:54:09.597Z",
+            "updatedAt": "2023-10-12T10:15:19.603Z",
+            "__v": 1,
+            "deleted": false,
+            "highlights": [
+              "4GB RAM",
+              "64GB ROM",
+              "3 year warrantee",
+              "20mpx front cam",
+              "183gm"
+            ]
+          },
+          "quantity": 1,
+          "_id": "6519145d455006b5432841de"
+        },
+        // Remaining products in this order
+      ],
+      "totalItems": 2,
+      "totalAmount": 534,
+      "shippingAddress": {
+        "firstName": "Mohammed ",
+        "lastName": "Rehan",
+        "emailAddress": "rehan@zayd.com",
+        "mobileNumber": "+917337234824",
+        "altMobileNumber": "+919652336445",
+        "country": "india",
+        "street": "H-No: 5-16, Near royal function hall",
+        "city": "Hyderabad",
+        "state": "Telangana",
+        "pinCode": "506367",
+        "dist": "Siddipet",
+        "mandal": "Maddur",
+        "village": "Maddur",
+        "_id": "64f1579c2239b552d711a8b4"
+      },
+      "paymentMethod": "cash",
+      "status": "cancelled",
+      "_id": "6519145d455006b5432841dd",
+      "createdAt": "2023-10-06T11:12:14.446Z",
+      "updatedAt": "2023-11-02T13:46:22.503Z"
+    },
+    // Other remaining orders of the user
+    ]
+  }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Order Not Found / User Orders Not Found" }
+```
+**Get User Data `GET /api/v1/user/own/info`**
+
+***Request***
+
+Request Object is not required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "User Data Fetched Successfully",
+    "user": {
+        "_id": "64d9cca1fd210ef389e268a0",
+        "user_name": "Minnathullah Rahmani",
+        "email": "minnathullahmohammed7337@gmail.com",
+        "password": "$2b$12$c.3mWslgXymvEkvfBsALX.BtAFmW76GPVMhYZV3FmPVF52zo9lrkC",
+        "phone": "+919652336445",
+        "createdAt": "2023-08-14T06:41:37.807Z",
+        "updatedAt": "2023-10-13T04:04:28.467Z",
+        "otpSecret": "$2b$12$.D571GHVT.CGdwX9hplSHejCnR4DVzcpLlSaDZRinOyaaC5p/p/dC",
+        "__v": 34,
+        "addresses": [
+            {
+                "firstName": "Mohammed ",
+                "lastName": "Rehan",
+                "emailAddress": "rehan@zayd.com",
+                "mobileNumber": "+917337234824",
+                "altMobileNumber": "+919652336445",
+                "country": "india",
+                "street": "H-No: 5-16, Near gandhi",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "pinCode": "506367",
+                "dist": "Siddipet",
+                "mandal": "Maddur",
+                "village": "Maddur",
+                "_id": "64f1579c2239b552d711a8b4"
+            },
+            // Other addresses if present
+        ],
+        "role": "user",
+        "token": "zdW6IMKV0sLDq53FinYgOyVSOFXGr38HP9r6bhnWG7tYDyodre9A"
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "User Not Found" }
+```
+**Add User Address `POST /api/v1/user/own/add-address`**
+
+***Request***
+
+Request Body:
+```javascript
+{
+  firstName: String,
+  lastName: String,
+  emailAddress: String,
+  mobileNumber: String,
+  altMobileNumber: String,
+  country: String,
+  street: String,
+  city: String,
+  state: String,
+  pinCode: String,
+  dist: String,
+  mandal: String,
+  village: String,
+}
+```
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "User Address Added Successfully",
+    "user": {
+        "_id": "64d9cca1fd210ef389e268a0",
+        "user_name": "Minnathullah Rahmani",
+        "email": "minnathullahmohammed7337@gmail.com",
+        "password": "$2b$12$c.3mWslgXymvEkvfBsALX.BtAFmW76GPVMhYZV3FmPVF52zo9lrkC",
+        "phone": "+919652336445",
+        "createdAt": "2023-08-14T06:41:37.807Z",
+        "updatedAt": "2023-10-13T04:04:28.467Z",
+        "otpSecret": "$2b$12$.D571GHVT.CGdwX9hplSHejCnR4DVzcpLlSaDZRinOyaaC5p/p/dC",
+        "__v": 34,
+        "addresses": [
+            {
+                "firstName": "Mohammed ",
+                "lastName": "Rehan",
+                "emailAddress": "rehan@zayd.com",
+                "mobileNumber": "+917337234824",
+                "altMobileNumber": "+919652336445",
+                "country": "india",
+                "street": "H-No: 5-16, Near gandhi",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "pinCode": "506367",
+                "dist": "Siddipet",
+                "mandal": "Maddur",
+                "village": "Maddur",
+                "_id": "64f1579c2239b552d711a8b4"
+            },
+            // Other addresses if present
+        ],
+        "role": "user",
+        "token": "zdW6IMKV0sLDq53FinYgOyVSOFXGr38HP9r6bhnWG7tYDyodre9A"
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "User Not Found" }
+```
+*HTTP Status Code: 400 BAD REQUEST*
+```javascript
+{ success: false, message: "Required Fields Error" }
+```
+**Get User Address `GET /api/v1/user/own/get-addresses`**
+
+***Request***
+
+Request Object Is Not Required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "User Addresses Fetched Successfully",
+    "addresses": [
+        {
+            "firstName": "Mohammed ",
+            "lastName": "Rehan",
+            "emailAddress": "rehan@zayd.com",
+            "mobileNumber": "+917337234824",
+            "altMobileNumber": "+919652336445",
+            "country": "india",
+            "street": "H-No: 5-16, Near gandhi",
+            "city": "Hyderabad",
+            "state": "Telangana",
+            "pinCode": "506367",
+            "dist": "Siddipet",
+            "mandal": "Maddur",
+            "village": "Maddur",
+            "_id": "64f1579c2239b552d711a8b4"
+        },
+        // All Other Addresses
+    ]
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "User Not Found" }
+```
+**Update Address By Address ID `PUT /api/v1/user/own/update-address/{addressId}`**
+
+***Request***
+
+Path Parameter:
+
+addressId (string, required): The unique identifier for the address.
+
+Request Body:
+```javascript
+{
+  firstName: String,
+  lastName: String,
+  emailAddress: String,
+  mobileNumber: String,
+  altMobileNumber: String,
+  country: String,
+  street: String,
+  city: String,
+  state: String,
+  pinCode: String,
+  dist: String,
+  mandal: String,
+  village: String,
+}
+```
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Address Updated Successfully",
+    "updatedUser": {
+        "_id": "64d9cca1fd210ef389e268a0",
+        "user_name": "Minnathullah Rahmani",
+        "email": "minnathullahmohammed7337@gmail.com",
+        "password": "$2b$12$c.3mWslgXymvEkvfBsALX.BtAFmW76GPVMhYZV3FmPVF52zo9lrkC",
+        "phone": "+919652336445",
+        "createdAt": "2023-08-14T06:41:37.807Z",
+        "updatedAt": "2023-11-03T05:55:20.447Z",
+        "otpSecret": "$2b$12$HAuJ6i789/0EWS7nescilOyvUWaVmqLj7qnD83w6WDAeEUEr1MBXu",
+        "__v": 37,
+        "addresses": [
+            {
+                "firstName": "Mohammed ",
+                "lastName": "Rehan",
+                "emailAddress": "rehan@zayd.com",
+                "mobileNumber": "+917337234824",
+                "altMobileNumber": "+919652336445",
+                "country": "india",
+                "street": "H-No: 5-16, Near gandhi",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "pinCode": "506367",
+                "dist": "Siddipet",
+                "mandal": "Maddur",
+                "village": "Maddur",
+                "_id": "64f1579c2239b552d711a8b4"
+            },
+            // Other remaining addresses
+        ],
+        "role": "user",
+        "token": "zdW6IMKV0sLDq53FinYgOyVSOFXGr38HP9r6bhnWG7tYDyodre9A"
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Address Not Found / User Not Found" }
+```
+**Delete Address by  Address ID `DELETE /api/v1/user/own/delete-address/{addressId}`**
+
+***Request***
+
+Path Parameter:
+
+addressId (string, required): The unique identifier for the address.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Address Deleted Successfully",
+    "userPostDelete": {
+        "_id": "64d9cca1fd210ef389e268a0",
+        "user_name": "Minnathullah Rahmani",
+        "email": "minnathullahmohammed7337@gmail.com",
+        "password": "$2b$12$c.3mWslgXymvEkvfBsALX.BtAFmW76GPVMhYZV3FmPVF52zo9lrkC",
+        "phone": "+919652336445",
+        "createdAt": "2023-08-14T06:41:37.807Z",
+        "updatedAt": "2023-11-03T05:46:51.301Z",
+        "otpSecret": "$2b$12$K5toV6m5g4Ugw0RKDORaiOxCDtiKAvjGdIcDmSwvD5.//UFOiyfFm",
+        "__v": 36,
+        "addresses": [
+            //All the addresses after the successfull deletion of the the given order
+            {
+                "firstName": "Mohammed ",
+                "lastName": "Rehan",
+                "emailAddress": "rehan@zayd.com",
+                "mobileNumber": "+917337234824",
+                "altMobileNumber": "+919652336445",
+                "country": "india",
+                "street": "H-No: 5-16, Near gandhi",
+                "city": "Hyderabad",
+                "state": "Telangana",
+                "pinCode": "506367",
+                "dist": "Siddipet",
+                "mandal": "Maddur",
+                "village": "Maddur",
+                "_id": "64f1579c2239b552d711a8b4"
+            },
+            // Other remaining addresses
+        ],
+        "role": "user",
+        "token": "zdW6IMKV0sLDq53FinYgOyVSOFXGr38HP9r6bhnWG7tYDyodre9A"
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Address Not Found / User Not Found" }
+```
+**Create Or Add Prducts To Your Wishlist `POST /api/v1/wishlist/user/add-to-wishlist/{productId}`**
+
+***Request***
+
+Path Parameter:
+
+productId (string, required): The unique identifier for the product.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Item Added To Wishlist",
+    "wishlist": {
+        "_id": "650548475b0c14784e62cd86",
+        "user": "64d9cca1fd210ef389e268a0",
+        "products": [
+            "65014bd34f41af7936475b73",
+            "65017bb54f41af7936475bd7",
+            // All other products
+        ],
+        "createdAt": "2023-09-16T06:16:39.827Z",
+        "updatedAt": "2023-11-03T06:19:28.210Z",
+        "__v": 60
+    }
+}
+```
+*HTTP Status Code: 201 CREATED*
+```javascript
+{
+  "success": true,
+  "message": "Wishlist Created & Added Item To It Successfully",
+  "wishlist": {
+    "products": [
+            "65014bd34f41af7936475b73"
+    ],
+    "createdAt": "2023-09-16T06:16:39.827Z",
+    "updatedAt": "2023-11-03T06:19:28.210Z",
+    "__v": 60
+  }
+  
+}
+```
+***Error Responses***
+*HTTP Status Code: 409 CONFLICT*
+```javascript
+{success: false, message: "Item is already present in your Wishlist",}
+```
+**Fetch Wishlist Items `GET /api/v1/wishlist/user/get-wishlist`**
+
+***Request***
+
+Request object is not required
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Wishlist Items fetched successfully",
+    "wishlist": {
+        "_id": "650548475b0c14784e62cd86",
+        "user": "64d9cca1fd210ef389e268a0",
+        "products": [
+            {
+                "thumbnail": {
+                    "location": "public\\images\\product\\thumbnail-1694583763785-928417253-perfume_oil_thumbnail.jpg",
+                    "contentType": "image/jpeg",
+                    "originalname": "perfume_oil_thumbnail.jpg",
+                    "size": 21513
+                },
+                "_id": "65014bd34f41af7936475b73",
+                "product_name": "Perfume Oil",
+                "slug": "perfume-oil",
+                "brand": "65014af14f41af7936475b5a",
+                "category": "6501396a4f41af7936475a6a",
+                "description": "Mega Discount, Impression of Acqua Di Gio by GiorgioArmani concentrated attar perfume Oil",
+                "stock": 58,
+                "price": 13,
+                "discountPercentage": 8.4,
+                "images": [
+                    {
+                        "location": "public\\images\\product\\image_1-1694583763796-985306334-perfume_oil_image1.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "perfume_oil_image1.jpg",
+                        "size": 10734,
+                        "_id": "65014bd34f41af7936475b74"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697103224708-403892907-perfume_oil_image2.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "perfume_oil_image2.jpg",
+                        "size": 21979,
+                        "_id": "6527bd786bb91281f8558aac"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697103239536-315782199-perfume_oil_image3.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "perfume_oil_image3.jpg",
+                        "size": 19771,
+                        "_id": "6527bd876bb91281f8558abd"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697103272304-983693337-perfume_oil_thumbnail.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "perfume_oil_thumbnail.jpg",
+                        "size": 21513,
+                        "_id": "6527bda86bb91281f8558acf"
+                    }
+                ],
+                "createdAt": "2023-09-13T05:42:43.897Z",
+                "updatedAt": "2023-10-14T06:09:53.198Z",
+                "__v": 1,
+                "deleted": false,
+                "highlights": [
+                    "concentrated attar",
+                    "Non-Alcaholic",
+                    "Perfume that refreshes the environment",
+                    "50ml",
+                    null
+                ]
+            },
+            // All other products in the wishlist
+        ],
+        "createdAt": "2023-09-16T06:16:39.827Z",
+        "updatedAt": "2023-11-03T06:19:28.210Z",
+        "__v": 60
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Wishlist Not Found" }
+```
+**Delete WishList Items `DELETE /api/v1/wishlist/user/delete-wishlist-item/{productId}`**
+
+***Request***
+
+Path Parameter:
+
+productId (string, required): The unique identifier for the product.
+
+***Responses***
+
+*HTTP Status Code: 200 OK*
+```javascript
+{
+    "success": true,
+    "message": "Item Deleted Successfully",
+    "wishlist": {
+        "_id": "650548475b0c14784e62cd86",
+        "user": "64d9cca1fd210ef389e268a0",
+        "products": [
+            //Products after deleting the given product from wishlist
+            {
+                "thumbnail": {
+                    "location": "public\\images\\product\\thumbnail-1694596021555-390770788-Fog_Scent_Xpressio_Perfume_thumbnail.webp",
+                    "contentType": "image/webp",
+                    "originalname": "Fog_Scent_Xpressio_Perfume_thumbnail.webp",
+                    "size": 23660
+                },
+                "_id": "65017bb54f41af7936475bd7",
+                "product_name": "Fog Scent Xpressio Perfume",
+                "slug": "fog-scent-xpressio-perfume",
+                "brand": "65014aa14f41af7936475b54",
+                "category": "6501396a4f41af7936475a6a",
+                "description": "Product details of Best Fog Scent Xpressio Perfume 100ml For Men cool long lasting perfumes for Men",
+                "stock": 61,
+                "price": 13,
+                "discountPercentage": 8.14,
+                "images": [
+                    {
+                        "location": "public\\images\\product\\image_1-1694596021555-834973975-Fog_Scent_Xpressio_Perfume_image1.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "Fog_Scent_Xpressio_Perfume_image1.jpg",
+                        "size": 9055,
+                        "_id": "65017bb54f41af7936475bd8"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697101691517-296109208-Fog_Scent_Xpressio_Perfume_image2.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "Fog_Scent_Xpressio_Perfume_image2.jpg",
+                        "size": 14381,
+                        "_id": "6527b77b6bb91281f85574fa"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697101728373-448615607-Fog_Scent_Xpressio_Perfume_image3.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "Fog_Scent_Xpressio_Perfume_image3.jpg",
+                        "size": 8159,
+                        "_id": "6527b7a06bb91281f855750b"
+                    },
+                    {
+                        "location": "public\\images\\product\\image-1697101743750-735994401-Fog_Scent_Xpressio_Perfume_image4.jpg",
+                        "contentType": "image/jpeg",
+                        "originalname": "Fog_Scent_Xpressio_Perfume_image4.jpg",
+                        "size": 25664,
+                        "_id": "6527b7af6bb91281f855751d"
+                    }
+                ],
+                "createdAt": "2023-09-13T09:07:01.683Z",
+                "updatedAt": "2023-10-12T09:12:16.603Z",
+                "__v": 1,
+                "deleted": false,
+                "highlights": [
+                    "Alcoholic Perfume",
+                    "Lasts as long as you in bed",
+                    "Perfume that refreshes the environment",
+                    "Fog Jo Frog Bana de",
+                    "100ml"
+                ]
+            },
+            //All other products in the wishlist
+        ],
+        "createdAt": "2023-09-16T06:16:39.827Z",
+        "updatedAt": "2023-11-03T06:36:43.483Z",
+        "__v": 61
+    }
+}
+```
+***Error Responses***
+*HTTP Status Code: 404 NOT FOUND*
+```javascript
+{ success: false, message: "Wishlist Not Found / Item Not Found" }
 ```
