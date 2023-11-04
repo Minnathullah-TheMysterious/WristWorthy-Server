@@ -49,15 +49,42 @@ MongoDB is used as the database to store user information, product data, and ord
 
 Payment processing is handled via Stripe for secure and seamless transactions.
 
+**Twilio:**
+
+Twilio had been employed for sending OTP for resetting password
+
+**nodemailer:**
+
+nodemailer is employed for sending mails to users for resetting the password and delivering the order invoice to the customer
+
+**multer:**
+
+Multer is employed to manage files associated with products, brands, categories, and promotional materials.
+
 **Front-end Framework:**
 
 The front-end of the application is built using React.js
 ## Installation and Usage
-Clone the repository `git clone https://github.com/minnathullah-TheMysterious/books-server.git`
+Clone the repository `git clone https://github.com/minnathullah-TheMysterious/wristworthy-server.git`
 
 Install dependencies using `npm install`.
 
-Configure your *MongoDB and Stripe API keys*
+Configure your `MongoDB, Stripe API keys and Twilio account details, etc.` as give below.
+
+Create a `.env` file and provide the following environmental variables
+
+```.env
+PORT = 7070
+MONGO_URL = your_mongo_url
+JWT_SECRET_KEY = your_jwt_secret
+TWILIO_AUTH_TOKEN = your_twilio_authentication_token
+TWILIO_ACCOUNT_SID = your_twilio_account_sid
+TWILIO_PHONE_NUMBER = your_twilio_phone_number
+SESSION_SECRET_KEY = your_section_secret_key
+STRIPE_SECRET_API_KEY_ = your_stripe_account_secret_api_key
+STRIPE_ENDPOINT_SECRET_KEY = your_stripe_endpoint_secret_key
+MAIL_PASSWORD = your_mail_password
+```
 
 Run the application using `npm run server`.
 
