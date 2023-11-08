@@ -31,9 +31,11 @@ export const addToCartController = async (req, res) => {
         items: [{ product: productId }],
       });
       await newCart.save();
+
       const cart = await cartModel
         .findOne({ user: _id })
         .populate("items.product");
+        
       return res.status(201).json({
         success: true,
         message: "Item Added To Cart",
@@ -254,7 +256,7 @@ export const updateProductQuantityController = async (req, res) => {
     const updatedCart = await cartModel
       .findOne({ user: _id })
       .populate("items.product");
-      
+
     return res.status(200).json({
       success: true,
       message: "Quantity Updated Successfully",

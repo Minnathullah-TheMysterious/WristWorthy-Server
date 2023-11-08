@@ -103,7 +103,7 @@ export const deleteWishlistItemController = async (req, res) => {
     );
 
     if (!isProductIsInWishlist) {
-      return res.status(409).json({
+      return res.status(404).json({
         success: false,
         message: "Item Not Found",
       });

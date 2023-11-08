@@ -418,7 +418,7 @@ export const resetPasswordMailController = async (req, res) => {
 
     //Reset The Token immediately after user resets the password
     const response = await generateToken();
-    
+
     if (response.success) {
       user.token = response.token;
       await user.save();
